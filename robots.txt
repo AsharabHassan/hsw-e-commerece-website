@@ -1,0 +1,19 @@
+# ---------------------------------------------------------------
+# TEMPORARY: blocks search indexing while the page still shows
+# TBD placeholders (ingredient amounts, price, capsule format).
+#
+# DELETE THIS FILE — or swap to the "AT LAUNCH" block below —
+# once the real content is in. Leaving it in place will keep the
+# product page out of Google entirely.
+# ---------------------------------------------------------------
+User-agent: *
+Disallow: /
+
+# ---------------------------------------------------------------
+# AT LAUNCH, replace everything above with:
+#
+# User-agent: *
+# Allow: /
+#
+# Sitemap: https://harleystreetmedicalwellness.co.uk/sitemap.xml
+# ---------------------------------------------------------------
