@@ -434,3 +434,8 @@
 }
 .cod-notice strong{display:block;margin-bottom:.35rem;font-size:1.0625rem}
 .cod-amount{font-family:var(--display);font-size:1.75rem;color:var(--gold);display:block;margin:.5rem 0}
+
+/* The `hidden` attribute sets display:none in the UA stylesheet, but any
+   later `display` rule of ours beats it on specificity — which silently
+   un-hides elements we asked to be hidden. Belt and braces. */
+[hidden]{display:none!important}

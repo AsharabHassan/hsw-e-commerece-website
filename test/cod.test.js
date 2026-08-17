@@ -6,6 +6,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 
 import { setupDb, truncateAll } from './helpers/db.js';
 import { getApp, agent, csrfFrom, signIn, request } from './helpers/app.js';
@@ -267,5 +268,35 @@ test('cash on delivery — admin', async (t) => {
 
     assert.equal(res.status, 403);
     assert.equal((await orders.getById(order.id)).status, 'pending');
+  });
+});
+
+test('the cash fee line is hidden until cash is chosen', async (t) => {
+  await getApp();
+  t.beforeEach(truncateAll);
+
+  await t.test('the summary row starts hidden, and CSS cannot un-hide it', async () => {
+    const product = await sellable('fee-line');
+    const { client } = await basketWith(product);
+
+    const res = await client.get('/checkout');
+
+    // The row is present but hidden; the script reveals it on selection.
+    assert.match(res.text, /id="cod-fee-line" hidden/);
+
+    // A display rule elsewhere in the stylesheet outranks the UA stylesheet's
+    // [hidden]{display:none}, which showed the fee to card customers. The
+    // override must stay.
+    const css = await readFile('public/css/shop.css', 'utf8');
+    assert.match(css, /\[hidden\]\{display:none!important\}/);
+  });
+
+  await t.test('the rendered total excludes the fee when card is selected', async () => {
+    const product = await sellable('fee-total', 5400);
+    const { client } = await basketWith(product);
+
+    const res = await client.get('/checkout');
+    // £54.00 + £4.95 delivery, with no cash handling.
+    assert.match(res.text, /id="order-total">£58\.95</);
   });
 });
