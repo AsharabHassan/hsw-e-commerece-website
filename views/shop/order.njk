@@ -7,7 +7,11 @@
 <section class="band">
   <div class="wrap">
     <div class="head centred">
-      {% if order.status == 'pending' %}
+      {% if order.status == 'pending' and order.payment_method == 'cod' %}
+        <p class="eyebrow">Order received</p>
+        <h1 class="display">Pay On <span class="gold">Delivery</span></h1>
+        <p class="sub">Thank you. Your order is confirmed and nothing has been charged.</p>
+      {% elif order.status == 'pending' %}
         <p class="eyebrow">Order received</p>
         <h1 class="display">Payment <span class="gold">Processing</span></h1>
         <p class="sub">
@@ -37,6 +41,16 @@
     </div>
 
     <div class="narrow">
+      {% if order.payment_method == 'cod' and order.status == 'pending' %}
+        <p class="cod-notice">
+          <strong>Have this ready in cash for the courier</strong>
+          <span class="cod-amount">{{ order.total_pence | money }}</span>
+          This includes a {{ order.cod_fee_pence | money }} cash handling fee.
+          Couriers do not carry change, so please have the exact amount. Nothing
+          has been taken from you yet.
+        </p>
+      {% endif %}
+
       {% include "partials/order-detail.njk" %}
 
       <p class="centred" style="margin-top:2.5rem">

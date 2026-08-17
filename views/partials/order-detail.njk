@@ -4,6 +4,7 @@
     <div><dt>Order reference</dt><dd class="mono">{{ order.public_token | orderRef }}</dd></div>
     <div><dt>Placed</dt><dd>{{ order.created_at | date({withTime: true}) }}</dd></div>
     <div><dt>Status</dt><dd><span class="status status-{{ order.status }}">{{ order.status }}</span></dd></div>
+    <div><dt>Payment</dt><dd>{{ 'Cash on delivery' if order.payment_method == 'cod' else 'Card' }}</dd></div>
     {% if order.paid_at %}<div><dt>Paid</dt><dd>{{ order.paid_at | date({withTime: true}) }}</dd></div>{% endif %}
   </dl>
 
@@ -28,6 +29,9 @@
   <div class="cart-summary">
     <p><span>Subtotal</span><span>{{ order.subtotal_pence | money }}</span></p>
     <p><span>Delivery</span><span>{% if order.shipping_pence %}{{ order.shipping_pence | money }}{% else %}Free{% endif %}</span></p>
+    {% if order.cod_fee_pence %}
+      <p><span>Cash handling</span><span>{{ order.cod_fee_pence | money }}</span></p>
+    {% endif %}
     <p class="cart-total"><span>Total</span><span>{{ order.total_pence | money }}</span></p>
   </div>
 

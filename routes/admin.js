@@ -409,6 +409,39 @@ router.get('/orders/:id', async (req, res, next) => {
   }
 });
 
+/**
+ * Confirm cash was collected on a COD order.
+ *
+ * The one place a human may declare an order paid — and only because a cash
+ * order has no Stripe record to disagree with. markCashCollected() guards on
+ * payment_method in SQL, so this cannot touch a card order even if the id in
+ * the URL belongs to one.
+ */
+router.post('/orders/:id/cash-collected', async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    const order = await orders.getById(id);
+    if (!order) return next();
+
+    if (order.payment_method !== 'cod') {
+      req.session.flash = {
+        kind: 'error',
+        message: 'That is a card order. Its payment status comes from Stripe, not from here.',
+      };
+      return res.redirect(`/admin/orders/${id}`);
+    }
+
+    const marked = await orders.markCashCollected(id);
+    req.session.flash = marked
+      ? { kind: 'ok', message: `Cash received — order marked paid.` }
+      : { kind: 'error', message: 'That order was not awaiting cash.' };
+
+    res.redirect(`/admin/orders/${id}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/orders/:id/status', async (req, res, next) => {
   try {
     const status = String(req.body.status ?? '');
@@ -422,9 +455,13 @@ router.post('/orders/:id/status', async (req, res, next) => {
     // an order paid by hand would mean the shop's records could disagree with
     // Stripe's, which is exactly the disagreement you cannot afford.
     if (status === 'paid') {
+      const order = await orders.getById(Number(req.params.id));
       req.session.flash = {
         kind: 'error',
-        message: 'Payment status is set by Stripe, not by hand. Refund or cancel in Stripe instead.',
+        message:
+          order?.payment_method === 'cod'
+            ? 'Use the "Cash Received" button above to mark a cash order paid.'
+            : 'Payment status is set by Stripe, not by hand. Refund or cancel in Stripe instead.',
       };
       return res.redirect(`/admin/orders/${req.params.id}`);
     }

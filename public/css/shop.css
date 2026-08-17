@@ -399,3 +399,38 @@
 @media (max-width:520px){
   .cart-table,.admin-table,.legal-table{display:block;overflow-x:auto;white-space:nowrap}
 }
+
+/* ---------- payment method choice ---------- */
+
+.pay-choice{border:1px solid var(--line);padding:1.5rem;margin:2rem 0}
+.pay-choice legend{
+  padding:0 .5rem;
+  font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+.pay-option{
+  display:flex;gap:.875rem;align-items:flex-start;
+  padding:1rem;margin-bottom:.75rem;cursor:pointer;
+  border:1px solid var(--line);background:var(--card);
+  transition:border-color .25s var(--ease);
+}
+.pay-option:last-child{margin-bottom:0}
+.pay-option:hover{border-color:var(--gold)}
+.pay-option:has(input:checked){border-color:var(--gold);background:var(--gold-soft)}
+
+.pay-option input{width:1.125rem;height:1.125rem;margin-top:.25rem;flex:none;accent-color:var(--gold)}
+.pay-option span{font-size:.8125rem;line-height:1.65;color:var(--muted)}
+.pay-option strong{
+  display:block;margin-bottom:.2rem;
+  font-size:.9375rem;font-weight:600;color:var(--ink);letter-spacing:.01em;
+}
+
+/* Cash-on-delivery notice on the order confirmation */
+.cod-notice{
+  max-width:44rem;margin:2rem auto;padding:1.25rem 1.5rem;
+  border:1px solid var(--gold);background:var(--gold-soft);
+  text-align:left;font-size:.9375rem;line-height:1.7;
+}
+.cod-notice strong{display:block;margin-bottom:.35rem;font-size:1.0625rem}
+.cod-amount{font-family:var(--display);font-size:1.75rem;color:var(--gold);display:block;margin:.5rem 0}

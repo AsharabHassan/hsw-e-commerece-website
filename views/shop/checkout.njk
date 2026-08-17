@@ -62,9 +62,36 @@
           <input id="ship_phone" name="ship_phone" type="tel" autocomplete="tel" value="{{ values.ship_phone }}">
         </div>
 
-        <p class="checkout-note">We deliver within the United Kingdom only. Card details are entered on Stripe&rsquo;s secure page &mdash; they never reach our servers.</p>
+        {% if codEnabled %}
+          <fieldset class="pay-choice">
+            <legend>How would you like to pay?</legend>
 
-        <button class="btn btn-gold" type="submit">Continue to Payment</button>
+            <label class="pay-option">
+              <input type="radio" name="payment_method" value="card"
+                     {{ 'checked' if values.payment_method != 'cod' }}
+                     data-fee="0">
+              <span>
+                <strong>Pay by card now</strong>
+                Entered on Stripe&rsquo;s secure page. Your card details never reach our servers.
+              </span>
+            </label>
+
+            <label class="pay-option">
+              <input type="radio" name="payment_method" value="cod"
+                     {{ 'checked' if values.payment_method == 'cod' }}
+                     data-fee="{{ codFeePence }}">
+              <span>
+                <strong>Cash on delivery &mdash; {{ codFeePence | money }} handling fee</strong>
+                Pay the courier in cash when your order arrives. Please have the
+                exact amount ready; couriers do not carry change.
+              </span>
+            </label>
+          </fieldset>
+        {% endif %}
+
+        <p class="checkout-note">We deliver within the United Kingdom only.</p>
+
+        <button class="btn btn-gold" type="submit">Place Order</button>
       </form>
 
       <aside class="order-summary">
@@ -76,10 +103,43 @@
         </ul>
         <p><span>Subtotal</span><span>{{ basket.subtotal_pence | money }}</span></p>
         <p><span>Delivery</span><span>{% if basket.shipping_pence %}{{ basket.shipping_pence | money }}{% else %}Free{% endif %}</span></p>
-        <p class="cart-total"><span>Total</span><span>{{ basket.total_pence | money }}</span></p>
+        {% if codEnabled %}
+          <p id="cod-fee-line" hidden><span>Cash handling</span><span>{{ codFeePence | money }}</span></p>
+        {% endif %}
+        <p class="cart-total"><span>Total</span><span id="order-total">{{ basket.total_pence | money }}</span></p>
         <p class="summary-back"><a href="/cart">Edit basket</a></p>
       </aside>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+{% if codEnabled %}
+<script>
+/* Shows the cash-handling fee in the summary the moment it is chosen.
+   Presentation only — the server recomputes every figure from the database
+   when the form is submitted, and ignores anything this script produces. */
+(function () {
+  var base = {{ basket.total_pence }};
+  var fee  = {{ codFeePence }};
+  var line = document.getElementById('cod-fee-line');
+  var total = document.getElementById('order-total');
+  if (!line || !total) return;
+
+  function render() {
+    var cod = document.querySelector('input[name="payment_method"]:checked');
+    var isCod = cod && cod.value === 'cod';
+    line.hidden = !isCod;
+    total.textContent = new Intl.NumberFormat('en-GB', {
+      style: 'currency', currency: 'GBP'
+    }).format((base + (isCod ? fee : 0)) / 100);
+  }
+
+  document.querySelectorAll('input[name="payment_method"]')
+    .forEach(function (el) { el.addEventListener('change', render); });
+  render();
+})();
+</script>
+{% endif %}
 {% endblock %}

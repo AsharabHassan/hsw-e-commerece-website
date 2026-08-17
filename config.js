@@ -35,6 +35,14 @@ const schema = z.object({
     .optional()
     .transform((v) => (v === undefined ? undefined : v === 'true')),
 
+  // Cash on delivery. Set COD_ENABLED=false to withdraw it without a deploy.
+  COD_ENABLED: z.enum(['true', 'false']).default('true').transform((v) => v === 'true'),
+
+  // Handling fee for collecting cash, in PENCE. 425 = £4.25.
+  // This must reflect a genuine cost of collecting cash rather than a penalty
+  // for not paying by card.
+  COD_FEE_PENCE: z.coerce.number().int().min(0).default(425),
+
   SHIPPING_PENCE: z.coerce.number().int().min(0).default(495),
   FREE_SHIPPING_OVER_PENCE: z.coerce.number().int().min(0).default(7500),
 
@@ -82,6 +90,11 @@ export default {
   secureCookies: env.SECURE_COOKIES ?? isProd,
 
   shippingPence: env.SHIPPING_PENCE,
+
+  cod: {
+    enabled: env.COD_ENABLED,
+    feePence: env.COD_FEE_PENCE,
+  },
   freeShippingOverPence: env.FREE_SHIPPING_OVER_PENCE,
 
   storeName: env.STORE_NAME,

@@ -54,21 +54,36 @@ const orders = {
    *   ship: object
    * }} input
    */
-  async create({ email, user_id = null, lines, shipping_pence = 0, ship }) {
+  async create({
+    email,
+    user_id = null,
+    lines,
+    shipping_pence = 0,
+    cod_fee_pence = 0,
+    payment_method = 'card',
+    ship,
+  }) {
     if (!Array.isArray(lines) || lines.length === 0) {
       throw new Error('Refusing to create an order with no lines');
     }
 
+    if (!['card', 'cod'].includes(payment_method)) {
+      throw new Error(`Unknown payment method: ${payment_method}`);
+    }
+
+    // A card order never carries a cash-handling fee.
+    const codFee = payment_method === 'cod' ? cod_fee_pence : 0;
+
     const subtotal = lines.reduce((total, l) => total + l.product.price_pence * l.qty, 0);
-    const total = subtotal + shipping_pence;
+    const total = subtotal + shipping_pence + codFee;
 
     return withTransaction(async (client) => {
       const { rows } = await client.query(
         `insert into orders (
            public_token, user_id, email, status,
-           subtotal_pence, shipping_pence, total_pence,
+           subtotal_pence, shipping_pence, cod_fee_pence, total_pence, payment_method,
            ship_name, ship_line1, ship_line2, ship_city, ship_postcode, ship_country, ship_phone
-         ) values ($1,$2,$3,'pending',$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+         ) values ($1,$2,$3,'pending',$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
          returning *`,
         [
           publicToken(),
@@ -76,7 +91,9 @@ const orders = {
           String(email).trim().toLowerCase(),
           subtotal,
           shipping_pence,
+          codFee,
           total,
+          payment_method,
           ship.name,
           ship.line1,
           ship.line2 ?? null,
@@ -158,6 +175,31 @@ const orders = {
         where id = $1 and status = 'pending'
         returning id`,
       [orderId, paymentIntent],
+    );
+    return rows.length > 0;
+  },
+
+  /**
+   * Record that cash was collected on delivery.
+   *
+   * Deliberately separate from markPaid(). A card order's payment state is
+   * owned by Stripe and nothing else may touch it — that is what stops this
+   * shop's records and Stripe's from ever disagreeing. A COD order has no
+   * Stripe involvement at all, so a human confirming the cash arrived is the
+   * only possible source of truth.
+   *
+   * The payment_method guard is in the WHERE clause, so this cannot mark a
+   * card order paid even if a route calls it by mistake.
+   *
+   * @returns {Promise<boolean>} true if this call was the one that paid it
+   */
+  async markCashCollected(orderId) {
+    const { rows } = await query(
+      `update orders
+          set status = 'paid', paid_at = now()
+        where id = $1 and status = 'pending' and payment_method = 'cod'
+        returning id`,
+      [orderId],
     );
     return rows.length > 0;
   },

@@ -19,6 +19,20 @@
   <div><dt>Account</dt><dd>{% if order.user_id %}Registered customer{% else %}Guest checkout{% endif %}</dd></div>
 </dl>
 
+{% if order.payment_method == 'cod' and order.status == 'pending' %}
+  <h2 class="display" style="margin-top:3rem">Cash On Delivery</h2>
+  <p class="cod-notice">
+    <strong>{{ order.total_pence | money }} to collect</strong>
+    This order is unpaid. Confirm it below only once the cash is actually in
+    hand — this is the only record that the money arrived, because there is no
+    Stripe payment behind it.
+  </p>
+  <form method="post" action="/admin/orders/{{ order.id }}/cash-collected" class="admin-form">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <button class="btn btn-gold" type="submit">Cash Received &mdash; Mark Paid</button>
+  </form>
+{% endif %}
+
 <h2 class="display" style="margin-top:3rem">Update Status</h2>
 
 <form method="post" action="/admin/orders/{{ order.id }}/status" class="admin-form">
@@ -34,10 +48,12 @@
       {% endfor %}
     </select>
     <small>
-      <strong>Paid</strong> is deliberately not in this list. Payment state is
-      owned by the verified Stripe webhook, so this panel and Stripe cannot
-      disagree about who has been charged. Refund or cancel a payment in the
-      Stripe dashboard; this shop will follow.
+      <strong>Paid</strong> is deliberately not in this list for card orders.
+      Payment state is owned by the verified Stripe webhook, so this panel and
+      Stripe cannot disagree about who has been charged. Refund or cancel a
+      payment in the Stripe dashboard; this shop will follow.
+      Cash-on-delivery orders are the exception — there is no Stripe record, so
+      the button above is the only way they become paid.
     </small>
   </div>
 
