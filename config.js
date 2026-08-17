@@ -22,6 +22,19 @@ const schema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_PUBLISHABLE_KEY: z.string().optional(),
 
+  // Session cookies are marked `secure` in production, which means the
+  // browser only ever sends them over HTTPS. That is correct — and it makes
+  // the site unusable over plain HTTP, so an IP-only staging box before TLS
+  // is set up would let nobody log in.
+  //
+  // Set SECURE_COOKIES=false for that window ONLY. Anything a customer
+  // touches must be HTTPS: over HTTP a session cookie crosses the network in
+  // clear text and can be copied by anyone on the path.
+  SECURE_COOKIES: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => (v === undefined ? undefined : v === 'true')),
+
   SHIPPING_PENCE: z.coerce.number().int().min(0).default(495),
   FREE_SHIPPING_OVER_PENCE: z.coerce.number().int().min(0).default(7500),
 
@@ -63,6 +76,10 @@ export default {
   baseUrl: env.BASE_URL.replace(/\/+$/, ''),
   databaseUrl: env.DATABASE_URL,
   sessionSecret: env.SESSION_SECRET ?? 'dev-only-insecure-session-secret',
+
+  // Defaults to "secure in production". Only an explicit SECURE_COOKIES=false
+  // turns it off, so it cannot happen by accident.
+  secureCookies: env.SECURE_COOKIES ?? isProd,
 
   shippingPence: env.SHIPPING_PENCE,
   freeShippingOverPence: env.FREE_SHIPPING_OVER_PENCE,

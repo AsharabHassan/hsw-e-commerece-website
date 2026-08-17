@@ -137,7 +137,7 @@ export async function createApp({ runMigrations = true } = {}) {
       rolling: true,
       cookie: {
         httpOnly: true,
-        secure: config.isProd,
+        secure: config.secureCookies,
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000,
       },
