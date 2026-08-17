@@ -1,0 +1,64 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "_comment": [
+    "This repository holds two things:",
+    "",
+    "  1. index.html — the original single-page product listing. This is what",
+    "     Vercel serves at harleystreetwellness.co.uk. It is live. Do not",
+    "     delete it until the shop has taken its place on the droplet and DNS",
+    "     has been moved.",
+    "",
+    "  2. The full shop (server.js, app.js, routes/, views/, db/). This is a",
+    "     Node + Postgres application. It does NOT run on Vercel as configured",
+    "     here — it needs a persistent Postgres, a writable disk for uploads,",
+    "     and a long-lived process. It is deployed to a DigitalOcean droplet;",
+    "     see deploy/DEPLOY.md.",
+    "",
+    "The settings below pin Vercel to static-only serving so that the presence",
+    "of package.json never causes it to try to build or run the Node app."
+  ],
+
+  "framework": null,
+  "buildCommand": null,
+  "installCommand": "echo 'static deployment — skipping install'",
+  "outputDirectory": ".",
+
+  "cleanUrls": true,
+  "trailingSlash": false,
+
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/(.*).(jpg|jpeg|png|webp|avif|svg|woff2)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

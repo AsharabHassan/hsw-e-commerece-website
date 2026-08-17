@@ -1,0 +1,29 @@
+# Vercel serves ONLY the static single-page site from this repository.
+#
+# Everything below is the droplet application. Without this file, Vercel would
+# upload it all as static assets, making the server source — templates, SQL,
+# route handlers — publicly downloadable from the CDN. No secrets live in
+# those files, but there is no reason to publish them either.
+#
+# See vercel.json for why this repository holds two deployables at once.
+
+server.js
+app.js
+config.js
+package.json
+package-lock.json
+
+db/
+lib/
+models/
+routes/
+views/
+test/
+deploy/
+docs/
+node_modules/
+
+public/
+.data/
+.env
+.env.*
