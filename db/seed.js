@@ -595,6 +595,10 @@ export async function seed({ adminEmail, adminPassword, quiet = false } = {}) {
   log(`Categories: ${CATEGORIES.length}`);
 
   // Products ---------------------------------------------------------------
+  let created = 0;
+  let updated = 0;
+  let skipped = 0;
+
   for (const spec of PRODUCTS) {
     const fields = {
       slug: spec.slug,
@@ -612,13 +616,33 @@ export async function seed({ adminEmail, adminPassword, quiet = false } = {}) {
     };
 
     const { rows } = await query('select id from products where slug = $1', [spec.slug]);
+
     if (rows.length > 0) {
-      await products.update(rows[0].id, fields);
+      // A product that already exists is left ALONE.
+      //
+      // Once the operator has edited a product in the admin panel — set the
+      // real price, written the real copy, cleared the placeholder flag — a
+      // re-run of the seed must not quietly undo that work. Re-seeding is
+      // something people do casually during a deploy; silently reverting a
+      // live catalogue to invented prices is not a recoverable mistake.
+      //
+      // Pass SEED_FORCE=1 to overwrite deliberately.
+      if (process.env.SEED_FORCE === '1') {
+        await products.update(rows[0].id, fields);
+        updated += 1;
+      } else {
+        skipped += 1;
+      }
     } else {
       await products.create(fields);
+      created += 1;
     }
   }
-  log(`Products: ${PRODUCTS.length} (all flagged as placeholders)`);
+
+  log(`Products: ${created} created, ${updated} overwritten, ${skipped} left untouched`);
+  if (skipped > 0) {
+    log('  (existing products were not modified — pass SEED_FORCE=1 to overwrite them)');
+  }
 
   // Admin user -------------------------------------------------------------
   const email = adminEmail ?? process.env.ADMIN_EMAIL;
