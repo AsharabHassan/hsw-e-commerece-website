@@ -1,0 +1,130 @@
+# Harley Street Wellness store — nginx site config
+#
+#   sudo cp deploy/nginx.conf.example /etc/nginx/sites-available/hsw
+#   sudo ln -s /etc/nginx/sites-available/hsw /etc/nginx/sites-enabled/hsw
+#   sudo nginx -t && sudo systemctl reload nginx
+#
+# Then run certbot, which rewrites this file to add the certificate paths and
+# the HTTP-to-HTTPS redirect:
+#
+#   sudo certbot --nginx -d shop.yourdomain.co.uk
+#
+# Replace shop.yourdomain.co.uk throughout before using.
+
+upstream hsw_app {
+    server 127.0.0.1:3000;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name shop.yourdomain.co.uk;
+
+    # certbot replaces this block with a redirect to 443 and adds a
+    # server block for TLS. Until then, this serves the app over plain HTTP.
+
+    # Uploads are capped at 5MB in the application; leave headroom for the
+    # multipart envelope or nginx rejects the request before node sees it.
+    client_max_body_size 6m;
+
+    # ---------------------------------------------------------------------
+    # Security headers
+    #
+    # The application also sets these via helmet. They are repeated here so
+    # that anything nginx serves directly — static files, error pages — is
+    # covered too.
+    # ---------------------------------------------------------------------
+    add_header X-Content-Type-Options    "nosniff" always;
+    add_header X-Frame-Options           "SAMEORIGIN" always;
+    add_header Referrer-Policy           "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy        "camera=(), microphone=(), geolocation=(), interest-cohort=()" always;
+    # Uncomment once certbot has TLS working. Do NOT enable it before then:
+    # a browser that sees HSTS will refuse plain HTTP to this host for two
+    # years, which is unpleasant to undo if the certificate is not ready.
+    # add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+
+    # ---------------------------------------------------------------------
+    # Static assets, served by nginx rather than node
+    # ---------------------------------------------------------------------
+    location /css/ {
+        alias /srv/hsw/public/css/;
+        expires 30d;
+        add_header Cache-Control "public";
+        access_log off;
+    }
+
+    location /js/ {
+        alias /srv/hsw/public/js/;
+        expires 30d;
+        add_header Cache-Control "public";
+        access_log off;
+    }
+
+    # Uploaded product images. Filenames are generated and content-addressed
+    # enough to cache hard.
+    location /uploads/ {
+        alias /srv/hsw/public/uploads/;
+        expires 365d;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+
+        # Never execute anything out of the upload directory, whatever ends
+        # up in it.
+        location ~ \.(php|pl|py|cgi|sh|js|html?)$ {
+            return 404;
+        }
+    }
+
+    location = /robots.txt {
+        alias /srv/hsw/robots.txt;
+        access_log off;
+    }
+
+    # ---------------------------------------------------------------------
+    # Stripe webhook
+    #
+    # Given its own location so the raw body is passed straight through with
+    # no buffering surprises — signature verification depends on the exact
+    # bytes Stripe sent.
+    # ---------------------------------------------------------------------
+    location /webhooks/ {
+        proxy_pass         http://hsw_app;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_request_buffering off;
+    }
+
+    # ---------------------------------------------------------------------
+    # Everything else
+    # ---------------------------------------------------------------------
+    location / {
+        proxy_pass         http://hsw_app;
+        proxy_http_version 1.1;
+
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+
+        # Load-bearing. Express is configured with `trust proxy`, and without
+        # this header it believes every request is plain HTTP — so it never
+        # sets the `secure` session cookie, and nobody can stay signed in.
+        proxy_set_header   X-Forwarded-Proto $scheme;
+
+        proxy_set_header   Upgrade           $http_upgrade;
+        proxy_set_header   Connection        "";
+
+        proxy_connect_timeout 10s;
+        proxy_read_timeout    60s;
+    }
+
+    # nginx handles gzip; the app does not, so that static files served here
+    # are compressed too.
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml application/xml;
+    gzip_min_length 1024;
+    gzip_vary on;
+}
