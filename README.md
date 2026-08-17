@@ -24,7 +24,7 @@ WebAssembly — persisted to `.data/pglite`. The same SQL and the same
 migrations run against a real Postgres server in production.
 
 ```bash
-npm test          # 169 tests, no external services required
+npm test          # 177 tests, no external services required
 ```
 
 ---
