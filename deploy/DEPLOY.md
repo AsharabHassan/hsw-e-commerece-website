@@ -13,6 +13,41 @@ Run everything as a normal user with `sudo`, not as root. Commands prefixed
   share the box)
 - A domain or subdomain with an **A record** pointing at the droplet's IP
 - Your Stripe account (test keys are fine to start)
+- An SSH keypair — see below
+
+### SSH key
+
+An ed25519 keypair for this droplet already exists at `~/.ssh/hsw_store`.
+The public half is `~/.ssh/hsw_store.pub`:
+
+```
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMVUj7rAKYsqDZpVET+HY1GIZbwaM0hs9vpflFnDxhRA hsw-store-droplet-2026-08-17
+```
+
+Fingerprint: `SHA256:ysXn132eLUlYZwJh2FN4TQBwnff3SIniC4JRrWQHsHw`
+
+**Add it to DigitalOcean before creating the droplet** — Settings → Security →
+Add SSH Key, or the "SSH Keys" panel on the droplet creation page. Attaching it
+at creation time means root password authentication is never enabled in the
+first place.
+
+`~/.ssh/config` has entries for it. Once the droplet exists, replace
+`REPLACE_WITH_DROPLET_IP` in that file with its IP address, then:
+
+```bash
+ssh hsw-store-root      # for section 1 only, before the hsw user exists
+ssh hsw-store           # everything after that
+```
+
+The private key has **no passphrase**, which is the usual arrangement for a
+deploy key. To add one:
+
+```bash
+ssh-keygen -p -f ~/.ssh/hsw_store
+```
+
+Never copy the private key (`~/.ssh/hsw_store`, the file with no `.pub`)
+anywhere. Only the `.pub` half goes to DigitalOcean.
 
 ---
 
@@ -29,10 +64,12 @@ ufw allow 'Nginx Full'
 ufw enable
 ```
 
-Log out and back in as `hsw`. Everything below is run as `hsw`.
+Log out and back in as `hsw` (`ssh hsw-store`). Everything below is run as
+`hsw`.
 
 Disable password logins while you are here — it is the single highest-value
-thing on this page:
+thing on this page. Do it only once you have confirmed key-based login works,
+or you will lock yourself out:
 
 ```bash
 sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
