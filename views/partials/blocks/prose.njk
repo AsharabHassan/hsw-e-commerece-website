@@ -1,0 +1,18 @@
+{# Plain body copy. The workhorse block for ordinary products that do not
+   need the bespoke treatments above. #}
+<section class="band{% if block.alt %} band-alt{% endif %}"{% if block.anchor %} id="{{ block.anchor }}"{% endif %}>
+  <div class="wrap{% if block.centred %} centred{% endif %}">
+
+    {% if block.eyebrow or block.heading %}
+      <div class="head{% if block.centred %} centred{% endif %}">
+        {% if block.eyebrow %}<p class="eyebrow">{{ block.eyebrow }}</p>{% endif %}
+        {% if block.heading %}<h2 class="display">{{ block.heading | inline }}</h2>{% endif %}
+      </div>
+    {% endif %}
+
+    <div class="narrow prose">
+      {% for p in block.paragraphs %}<p>{{ p | inline }}</p>{% endfor %}
+    </div>
+
+  </div>
+</section>

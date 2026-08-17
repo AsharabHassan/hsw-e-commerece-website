@@ -1,0 +1,77 @@
+{% extends "layout.njk" %}
+
+{% block title %}Your Basket | {{ storeName }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Basket</p>
+      <h1 class="display">Your <span class="gold">Basket</span></h1>
+    </div>
+
+    {% if cancelled %}
+      <p class="flash flash-error">Payment was cancelled. Your basket has been kept.</p>
+    {% endif %}
+
+    {% if basket.removed %}
+      <p class="flash flash-error">{{ basket.removed }} item{{ 's were' if basket.removed != 1 else ' was' }} removed because {{ 'they are' if basket.removed != 1 else 'it is' }} no longer available.</p>
+    {% endif %}
+
+    {% if basket.lines.length %}
+      <table class="cart-table">
+        <caption class="visually-hidden">Items in your basket</caption>
+        <thead>
+          <tr><th scope="col">Product</th><th scope="col">Price</th><th scope="col">Quantity</th><th scope="col">Total</th><th scope="col"><span class="visually-hidden">Remove</span></th></tr>
+        </thead>
+        <tbody>
+          {% for line in basket.lines %}
+            <tr>
+              <th scope="row">
+                <a href="/shop/{{ line.product.slug }}">{{ line.product.name }}</a>
+              </th>
+              <td>{{ line.product.price_pence | money }}</td>
+              <td>
+                <form method="post" action="/cart/update" class="qty-form">
+                  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                  <input type="hidden" name="product_id" value="{{ line.product.id }}">
+                  <label class="visually-hidden" for="qty-{{ line.product.id }}">Quantity of {{ line.product.name }}</label>
+                  <input id="qty-{{ line.product.id }}" type="number" name="qty" value="{{ line.qty }}" min="0" max="99" inputmode="numeric">
+                  <button class="btn-inline" type="submit">Update</button>
+                </form>
+              </td>
+              <td>{{ line.line_pence | money }}</td>
+              <td>
+                <form method="post" action="/cart/remove">
+                  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                  <input type="hidden" name="product_id" value="{{ line.product.id }}">
+                  <button class="btn-inline btn-remove" type="submit">Remove</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="cart-summary">
+        <p><span>Subtotal</span><span>{{ basket.subtotal_pence | money }}</span></p>
+        <p><span>Delivery</span><span>{% if basket.shipping_pence %}{{ basket.shipping_pence | money }}{% else %}Free{% endif %}</span></p>
+        {% if basket.free_shipping_remaining_pence %}
+          <p class="cart-nudge">Add {{ basket.free_shipping_remaining_pence | money }} more for free UK delivery.</p>
+        {% endif %}
+        <p class="cart-total"><span>Total</span><span>{{ basket.total_pence | money }}</span></p>
+      </div>
+
+      <div class="btn-row centred">
+        <a class="btn btn-gold" href="/checkout">Checkout</a>
+        <a class="btn btn-line" href="/shop">Keep shopping</a>
+      </div>
+
+    {% else %}
+      <p class="centred">Your basket is empty.</p>
+      <p class="centred btn-row"><a class="btn btn-gold" href="/shop">Browse the range</a></p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

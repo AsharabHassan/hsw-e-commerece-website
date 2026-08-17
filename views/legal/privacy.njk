@@ -1,0 +1,66 @@
+{% extends "layout.njk" %}
+
+{% block title %}Privacy Policy | {{ storeName }}{% endblock %}
+{% block description %}How {{ storeName }} collects, uses and protects your personal data.{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Legal</p>
+      <h1 class="display">Privacy <span class="gold">Policy</span></h1>
+      <p class="sub">Last updated {{ updated }}</p>
+    </div>
+
+    <div class="narrow prose legal-doc">
+
+      <p class="placeholder-notice" role="note">
+        <strong>For the site operator:</strong> this is a working draft that
+        describes what this website actually does with data. It carries
+        <span data-tbd>TBD</span> markers where a company detail is needed, and
+        it must be checked against how the clinic handles data elsewhere &mdash;
+        particularly if any of this data touches patient records, which are
+        special category data under UK GDPR.
+      </p>
+
+      <h2>1. Who is responsible for your data</h2>
+      <p>The data controller is <span data-tbd>{{ storeName }} Ltd &mdash; confirm the registered name</span>, company number <span data-tbd>TBD</span>, registered at <span data-tbd>TBD</span>. Our ICO registration number is <span data-tbd>TBD</span>.</p>
+      <p>For any question about your data, contact <a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a>.</p>
+
+      <h2>2. What we collect, and why</h2>
+      <table class="legal-table">
+        <thead><tr><th scope="col">Data</th><th scope="col">Why</th><th scope="col">Lawful basis</th></tr></thead>
+        <tbody>
+          <tr><td>Name, email, delivery address, phone</td><td>To take and deliver your order and to contact you about it</td><td>Performance of a contract</td></tr>
+          <tr><td>Order history</td><td>To handle returns, refunds and queries, and to meet our accounting obligations</td><td>Contract, and legal obligation</td></tr>
+          <tr><td>Account password</td><td>To let you sign in, if you choose to create an account</td><td>Contract</td></tr>
+          <tr><td>Session cookie</td><td>To keep your basket and keep you signed in</td><td>Strictly necessary &mdash; no consent required</td></tr>
+        </tbody>
+      </table>
+
+      <p>We do not run advertising or analytics trackers on this website, and we do not sell or share your data for marketing.</p>
+
+      <h2>3. Payment data</h2>
+      <p>Card payments are handled by Stripe Payments UK Ltd. Your card details are entered on Stripe&rsquo;s own page and are never received or stored by us. We keep only Stripe&rsquo;s reference for your payment, so that we can match it to your order and process refunds. Stripe&rsquo;s privacy policy is at <a href="https://stripe.com/gb/privacy" rel="noopener noreferrer" target="_blank">stripe.com/gb/privacy</a>.</p>
+
+      <h2>4. Cookies</h2>
+      <p>This website sets one cookie, <code>hsw.sid</code>, which identifies your session so your basket survives between pages and so you stay signed in. It is strictly necessary for the service you have asked for, so it does not require consent under PECR. It expires after 30 days.</p>
+      <p>Your light or dark theme preference is stored in your browser&rsquo;s local storage under <code>hsw-theme</code> and is never sent to us.</p>
+
+      <h2>5. How long we keep it</h2>
+      <p>Order records are kept for six years, which is the period HMRC requires for business records. Account details are kept until you ask us to delete them. Session records expire after 30 days.</p>
+
+      <h2>6. Who else sees it</h2>
+      <p>Stripe, to take payment. Our delivery carrier, <span data-tbd>TBD &mdash; name the carrier</span>, to deliver your order. Our hosting provider, DigitalOcean, on whose servers this website runs. We do not transfer your data outside the UK or EEA except where these providers do so under an approved transfer mechanism.</p>
+
+      <h2>7. Your rights</h2>
+      <p>Under UK GDPR you have the right to access your data, to have it corrected, to have it erased where we have no overriding reason to keep it, to restrict or object to processing, and to receive it in a portable form. To exercise any of these, email <a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a>. We will respond within one month.</p>
+      <p>If you are unhappy with how we have handled your data, you can complain to the Information Commissioner&rsquo;s Office at <a href="https://ico.org.uk" rel="noopener noreferrer" target="_blank">ico.org.uk</a> or on 0303 123 1113.</p>
+
+      <h2>8. Security</h2>
+      <p>This website is served over HTTPS. Passwords are stored using scrypt, a deliberately slow one-way hashing function, so we cannot read them and neither can anyone who obtained a copy of our database. The database is not reachable from the public internet.</p>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

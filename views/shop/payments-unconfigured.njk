@@ -1,0 +1,29 @@
+{% extends "layout.njk" %}
+
+{% block title %}Checkout unavailable | {{ storeName }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="band centred">
+  <div class="wrap">
+    <p class="eyebrow">Checkout</p>
+    <h1 class="display">Payments Are <span class="gold">Not Configured</span></h1>
+
+    <div class="narrow prose" style="text-align:left">
+      <p>This shop cannot take payment yet. Your basket has been kept, and nothing has been charged.</p>
+      <p class="footnote">
+        <span>For the site operator</span>
+        Set <code>STRIPE_SECRET_KEY</code> and <code>STRIPE_WEBHOOK_SECRET</code>
+        in <code>.env</code> on the server, then restart the application. Test
+        keys work end to end; swap them for live keys when you are ready to
+        take real money. See <code>deploy/DEPLOY.md</code>.
+      </p>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn btn-line" href="/cart">Back to basket</a>
+      <a class="btn btn-line" href="mailto:{{ storeEmail }}">Contact us to order</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

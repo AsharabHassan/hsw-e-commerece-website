@@ -64,10 +64,15 @@ async function createPostgres() {
 async function createPglite() {
   const { PGlite } = await import('@electric-sql/pglite');
 
-  const location =
-    process.env.PGLITE_MEMORY === '1'
-      ? 'memory://'
-      : (process.env.PGLITE_DIR ?? '.data/pglite');
+  const inMemory = process.env.PGLITE_MEMORY === '1';
+  const location = inMemory ? 'memory://' : (process.env.PGLITE_DIR ?? '.data/pglite');
+
+  // PGlite calls mkdir without `recursive`, so the parent has to exist first.
+  if (!inMemory) {
+    const { mkdirSync } = await import('node:fs');
+    const { dirname } = await import('node:path');
+    mkdirSync(dirname(location), { recursive: true });
+  }
 
   const lite = await PGlite.create(location);
 

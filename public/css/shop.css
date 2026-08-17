@@ -1,0 +1,401 @@
+/* ============================================================
+   SHOP COMPONENTS
+
+   Everything the original single-page build did not need: product
+   grids, the basket, forms, order tables and the admin panel.
+
+   Written in the same idiom as hsw.css — 0px radii, gold accents,
+   --line borders, Playfair for display and Montserrat for UI. No new
+   tokens are introduced; every colour here comes from hsw.css.
+   ============================================================ */
+
+/* ---------- utilities ---------- */
+
+.visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+.mono{
+  font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  font-size:.875em;letter-spacing:0;
+}
+
+.centred{text-align:center}
+
+/* ---------- announcements and flashes ---------- */
+
+.flash{
+  margin:1.5rem 0;padding:1rem 1.25rem;
+  border:1px solid var(--line);border-left:3px solid var(--gold);
+  background:var(--bg-alt);font-size:.9375rem;line-height:1.6;
+}
+.flash-error{border-left-color:#B4342A}
+.flash-ok{border-left-color:var(--gold)}
+
+/* ---------- the placeholder treatment ----------
+   Seeded demo content must be impossible to mistake for a real
+   listing, so it gets the same gold that marks a TBD elsewhere. */
+
+.placeholder-notice{
+  max-width:44rem;margin:2rem auto;padding:1.125rem 1.375rem;
+  border:1px solid var(--gold);background:var(--gold-soft);
+  font-size:.875rem;line-height:1.7;text-align:left;
+}
+.placeholder-notice strong{display:block;margin-bottom:.35rem;letter-spacing:.02em}
+
+.badge-placeholder{
+  position:absolute;top:.75rem;left:.75rem;z-index:2;
+  padding:.3rem .6rem;
+  background:var(--gold);color:var(--on-gold);
+  font-size:.625rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+}
+
+/* ---------- product grid ---------- */
+
+.product-grid{
+  display:grid;gap:2.5rem 2rem;
+  grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));
+}
+
+.product-card{display:flex;flex-direction:column}
+
+.product-card-media{
+  position:relative;display:block;
+  aspect-ratio:1;
+  background:var(--bg-alt);border:1px solid var(--line);
+  overflow:hidden;
+}
+.product-card-media img{width:100%;height:100%;object-fit:cover}
+
+.product-card-placeholder{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--display);font-size:2.5rem;color:var(--seed-empty);
+  letter-spacing:.08em;
+}
+
+.product-card.is-placeholder .product-card-media{border-color:var(--gold)}
+
+.product-card-body{padding:1.25rem 0 0}
+.product-card-body .eyebrow{margin:0 0 .5rem}
+.product-card-body h3{margin:0 0 .5rem;font-size:1.375rem;line-height:1.25}
+.product-card-body h3 a{color:inherit;text-decoration:none}
+.product-card-body h3 a:hover{color:var(--gold)}
+
+.product-card-sub{
+  margin:0 0 .75rem;color:var(--muted);font-size:.875rem;line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+.product-card-price{margin:0;font-weight:600;letter-spacing:.02em}
+.product-card-price[data-tbd]{color:var(--gold)}
+
+/* ---------- category tiles and filters ---------- */
+
+.category-row{
+  display:grid;gap:1.5rem;
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
+}
+
+.category-tile{
+  display:block;padding:2rem 1.75rem;
+  border:1px solid var(--line);background:var(--card);
+  text-decoration:none;color:inherit;
+  transition:border-color .3s var(--ease),transform .3s var(--ease);
+}
+.category-tile:hover{border-color:var(--gold);transform:translateY(-2px)}
+.category-tile h3{margin:0 0 .5rem;font-size:1.375rem}
+.category-tile p{margin:0 0 1rem;color:var(--muted);font-size:.875rem;line-height:1.65}
+.category-count{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
+.filter-row{display:flex;flex-wrap:wrap;gap:.625rem;justify-content:center;margin-top:2rem}
+
+.filter-chip{
+  padding:.5rem 1.125rem;border:1px solid var(--line);
+  font-size:.75rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;color:var(--muted);
+  transition:border-color .25s var(--ease),color .25s var(--ease);
+}
+.filter-chip:hover{border-color:var(--gold);color:var(--ink)}
+.filter-chip.is-active{border-color:var(--gold);background:var(--gold);color:var(--on-gold)}
+
+/* ---------- hero image ---------- */
+
+.hero-shot{
+  max-width:26rem;margin:2.5rem auto;
+  border:1px solid var(--line);background:var(--bg-alt);
+}
+.hero-shot img{width:100%;height:auto;display:block}
+
+.shot-filled{
+  width:100%;height:auto;aspect-ratio:1;object-fit:cover;
+  border:1px solid var(--line);
+}
+
+/* ---------- basket / add to basket ---------- */
+
+.basket-link{position:relative}
+.basket-count{
+  position:absolute;top:-.25rem;right:-.35rem;
+  min-width:1.15rem;height:1.15rem;padding:0 .25rem;
+  display:grid;place-items:center;
+  background:var(--gold);color:var(--on-gold);
+  font-size:.625rem;font-weight:600;line-height:1;
+}
+
+.add-form{display:inline-flex;align-items:stretch;gap:.75rem}
+
+.qty-field input,
+.qty-form input[type=number]{
+  width:4.5rem;height:100%;min-height:3.25rem;padding:.5rem .75rem;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font-family:var(--ui);font-size:1rem;text-align:center;
+}
+
+.btn.is-disabled{
+  opacity:.45;cursor:not-allowed;
+  background:transparent;color:var(--muted);border:1px solid var(--line);
+}
+
+/* ---------- tables ---------- */
+
+.cart-table,
+.admin-table,
+.legal-table{
+  width:100%;border-collapse:collapse;margin:2rem 0;
+  font-size:.9375rem;
+}
+
+.cart-table th,.cart-table td,
+.admin-table th,.admin-table td,
+.legal-table th,.legal-table td{
+  padding:1rem .75rem;text-align:left;vertical-align:top;
+  border-bottom:1px solid var(--line);
+}
+
+.cart-table thead th,
+.admin-table thead th,
+.legal-table thead th{
+  font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);border-bottom-color:var(--ink);
+}
+
+.cart-table tbody th,
+.admin-table tbody th{font-weight:500}
+
+.cart-table a,.admin-table a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.cart-table a:hover,.admin-table a:hover{color:var(--gold)}
+
+.qty-form{display:flex;gap:.5rem;align-items:center}
+
+.btn-inline{
+  padding:.4rem .75rem;border:1px solid var(--line);background:transparent;
+  color:var(--muted);font-family:var(--ui);font-size:.6875rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:border-color .25s var(--ease),color .25s var(--ease);
+}
+.btn-inline:hover{border-color:var(--gold);color:var(--ink)}
+.btn-remove:hover{border-color:#B4342A;color:#B4342A}
+
+/* ---------- summaries ---------- */
+
+.cart-summary{max-width:24rem;margin-left:auto}
+.cart-summary p{
+  display:flex;justify-content:space-between;gap:2rem;
+  margin:.5rem 0;font-size:.9375rem;color:var(--muted);
+}
+.cart-summary .cart-total{
+  margin-top:1rem;padding-top:1rem;border-top:1px solid var(--ink);
+  color:var(--ink);font-size:1.125rem;font-weight:600;
+}
+.cart-nudge{color:var(--gold)!important;font-size:.8125rem!important;display:block!important}
+
+/* ---------- checkout ---------- */
+
+.checkout-grid{
+  display:grid;gap:3rem;align-items:start;
+  grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);
+}
+@media (max-width:860px){.checkout-grid{grid-template-columns:1fr}}
+
+.order-summary{
+  padding:1.75rem;border:1px solid var(--line);background:var(--bg-alt);
+  position:sticky;top:2rem;
+}
+.order-summary h2{margin:0 0 1.25rem;font-size:1.25rem}
+.order-summary ul{list-style:none;margin:0 0 1.25rem;padding:0}
+.order-summary li,
+.order-summary p{
+  display:flex;justify-content:space-between;gap:1rem;
+  margin:.5rem 0;font-size:.875rem;color:var(--muted);line-height:1.5;
+}
+.order-summary .cart-total{
+  margin-top:1rem;padding-top:1rem;border-top:1px solid var(--ink);
+  color:var(--ink);font-weight:600;
+}
+.summary-back{display:block!important;margin-top:1.25rem!important;font-size:.8125rem!important}
+
+.checkout-note{
+  margin:1.5rem 0;padding:1rem 1.25rem;
+  background:var(--bg-alt);border-left:2px solid var(--gold);
+  font-size:.8125rem;line-height:1.7;color:var(--muted);
+}
+
+/* ---------- forms ---------- */
+
+.auth-form,.checkout-form,.admin-form{max-width:36rem}
+.auth-form{margin:0 auto}
+.admin-form{max-width:none}
+
+.field{margin-bottom:1.5rem}
+
+.field label,
+.field-check-group legend{
+  display:block;margin-bottom:.5rem;
+  font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+.field .optional{text-transform:none;letter-spacing:.02em;font-weight:400;opacity:.7}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;padding:.875rem 1rem;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font-family:var(--ui);font-size:1rem;line-height:1.5;
+  transition:border-color .25s var(--ease);
+}
+.field textarea{resize:vertical}
+.field textarea.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.8125rem;line-height:1.6}
+
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--gold);
+}
+
+.field small{
+  display:block;margin-top:.5rem;
+  font-size:.75rem;line-height:1.6;color:var(--muted);
+}
+.field small code{font-size:.9em}
+
+.field.has-error input,
+.field.has-error select,
+.field.has-error textarea{border-color:#B4342A}
+
+.field-error{margin:.5rem 0 0;color:#B4342A;font-size:.8125rem}
+
+.field-row{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}
+
+.field-check-group{border:1px solid var(--line);padding:1.5rem;margin-bottom:1.5rem}
+.field-check-group legend{padding:0 .5rem}
+
+.check{
+  display:flex;gap:.875rem;align-items:flex-start;
+  margin-bottom:1rem;font-size:.875rem;line-height:1.6;color:var(--muted);
+  text-transform:none;letter-spacing:normal;font-weight:400;
+}
+.check:last-child{margin-bottom:0}
+.check input{width:1.125rem;height:1.125rem;margin-top:.2rem;flex:none;accent-color:var(--gold)}
+.check strong{color:var(--ink)}
+
+.auth-alt{margin-top:1.5rem;font-size:.875rem;color:var(--muted);text-align:center}
+
+/* ---------- orders ---------- */
+
+.order-meta{
+  display:grid;gap:1.25rem 2rem;margin:0 0 2rem;
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+}
+.order-meta dt{
+  font-size:.625rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.35rem;
+}
+.order-meta dd{margin:0;font-size:.9375rem}
+
+.status{
+  display:inline-block;padding:.25rem .625rem;
+  font-size:.625rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid currentColor;
+}
+.status-pending{color:var(--muted)}
+.status-paid{color:var(--gold)}
+.status-shipped{color:var(--gold)}
+.status-cancelled,.status-refunded{color:#B4342A}
+
+.address-block{margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--line)}
+.address-block h3{
+  margin:0 0 .75rem;font-family:var(--ui);
+  font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+.address-block address{font-style:normal;line-height:1.8;font-size:.9375rem}
+
+/* ---------- admin ---------- */
+
+.admin-bar{padding:1.25rem 0!important}
+
+.admin-nav{display:flex;flex-wrap:wrap;gap:1.75rem;align-items:center}
+.admin-nav a{
+  font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;color:var(--muted);
+}
+.admin-nav a:hover,.admin-nav a[aria-current]{color:var(--gold)}
+.admin-nav-out{margin-left:auto}
+
+.admin-head{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap}
+
+.stat-row{
+  display:grid;gap:1.5rem;margin:2.5rem 0;
+  grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));
+}
+.stat{padding:1.5rem;border:1px solid var(--line);background:var(--bg-alt)}
+.stat dt{font-family:var(--display);font-size:1.75rem;line-height:1.1;margin-bottom:.35rem}
+.stat dd{
+  margin:0;font-size:.6875rem;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+}
+
+.admin-image-grid{
+  display:grid;gap:1.5rem;margin:1.5rem 0 2.5rem;
+  grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));
+}
+.admin-image-grid figure{margin:0}
+.admin-image-grid img{
+  width:100%;height:auto;aspect-ratio:1;object-fit:cover;
+  border:1px solid var(--line);
+}
+.admin-image-grid figcaption{
+  margin:.5rem 0;font-size:.75rem;color:var(--muted);line-height:1.5;
+}
+
+.btn-danger{border-color:#B4342A!important;color:#B4342A!important}
+.btn-danger:hover{background:#B4342A!important;color:#fff!important}
+
+/* ---------- legal documents ---------- */
+
+.legal-doc{text-align:left}
+.legal-doc h2{
+  margin:2.75rem 0 1rem;font-family:var(--display);
+  font-size:1.375rem;font-weight:400;line-height:1.3;
+}
+.legal-doc h2:first-of-type{margin-top:2rem}
+.legal-doc p{margin:0 0 1.125rem}
+.legal-table{font-size:.875rem}
+.legal-table td{color:var(--muted)}
+
+/* ---------- responsive ---------- */
+
+@media (max-width:640px){
+  .cart-table,.admin-table{font-size:.8125rem}
+  .cart-table th,.cart-table td,
+  .admin-table th,.admin-table td{padding:.75rem .5rem}
+  .cart-summary{max-width:none}
+  .add-form{width:100%;flex-wrap:wrap}
+  .add-form .btn{flex:1}
+}
+
+/* Tables are the one thing that genuinely cannot reflow; let them
+   scroll inside their own box rather than breaking the page. */
+@media (max-width:520px){
+  .cart-table,.admin-table,.legal-table{display:block;overflow-x:auto;white-space:nowrap}
+}

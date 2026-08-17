@@ -1,0 +1,23 @@
+{# Native details/summary accordion — no JavaScript, works before hydration,
+   and is keyboard accessible for free. #}
+<section class="band faq{% if block.alt %} band-alt{% endif %}"{% if block.anchor %} id="{{ block.anchor }}"{% endif %}>
+  <div class="wrap">
+
+    <div class="head centred">
+      {% if block.eyebrow %}<p class="eyebrow">{{ block.eyebrow }}</p>{% endif %}
+      {% if block.heading %}<h2 class="display">{{ block.heading | inline }}</h2>{% endif %}
+    </div>
+
+    <div class="narrow">
+      {% for item in block.items %}
+        <details>
+          <summary>{{ item.q }}</summary>
+          <div class="answer">
+            {% for p in item.a %}<p>{{ p | inline }}</p>{% endfor %}
+          </div>
+        </details>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>

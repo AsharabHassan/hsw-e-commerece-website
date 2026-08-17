@@ -1,0 +1,18 @@
+<article class="product-card{% if card.is_placeholder %} is-placeholder{% endif %}">
+  <a class="product-card-media" href="/shop/{{ card.slug }}">
+    {% if card.images.length %}
+      <img src="{{ card.images[0].path }}" alt="{{ card.images[0].alt or card.name }}"
+           width="600" height="600" loading="lazy">
+    {% else %}
+      <span class="product-card-placeholder" aria-hidden="true">HSW</span>
+    {% endif %}
+    {% if card.is_placeholder %}<span class="badge-placeholder">Placeholder</span>{% endif %}
+  </a>
+
+  <div class="product-card-body">
+    {% if card.category_name %}<p class="eyebrow">{{ card.category_name }}</p>{% endif %}
+    <h3 class="display"><a href="/shop/{{ card.slug }}">{{ card.name }}</a></h3>
+    {% if card.subtitle %}<p class="product-card-sub">{{ card.subtitle }}</p>{% endif %}
+    <p class="product-card-price"{% if card.is_placeholder %} data-tbd{% endif %}>{{ card.price_pence | money }}</p>
+  </div>
+</article>

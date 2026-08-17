@@ -1,0 +1,79 @@
+{% extends "layout.njk" %}
+
+{% block title %}{{ storeName }} — Clinic-Formulated Supplements{% endblock %}
+{% block description %}Supplements formulated at our Harley Street clinic, with every milligram published in full.{% endblock %}
+{% block canonical %}{{ baseUrl }}/{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+  <div class="wrap centred">
+    <p class="eyebrow">Clinic-Formulated Supplements</p>
+    <h1 class="display">Every Milligram, <span class="gold">Printed</span></h1>
+    <p class="sub">Most formulas print one large number on the front and a proprietary blend on the back. Ours publish the per-compound split, because you cannot judge a formula you cannot see.</p>
+
+    <div class="btn-row">
+      <a class="btn btn-gold" href="/shop">Browse the Range</a>
+      <a class="btn btn-line" href="https://harleystreetmedicalwellness.co.uk/">The Clinic</a>
+    </div>
+
+    {% if not hasRealProducts %}
+      <p class="placeholder-notice" role="note" style="margin-top:2.5rem">
+        <strong>This shop is not live yet.</strong>
+        Every product below is seeded placeholder content. Sign in to the admin
+        panel to replace it with your real range.
+      </p>
+    {% endif %}
+  </div>
+</section>
+
+{% if categories.length %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">The Range</p>
+      <h2 class="display">Where To <span class="gold">Start</span></h2>
+    </div>
+    <div class="category-row">
+      {% for cat in categories %}
+        <a class="category-tile" href="/shop?category={{ cat.slug }}">
+          <h3 class="display">{{ cat.name }}</h3>
+          {% if cat.blurb %}<p>{{ cat.blurb }}</p>{% endif %}
+          <span class="category-count">{{ cat.product_count }} product{{ 's' if cat.product_count != 1 }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="band band-alt">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Selected</p>
+      <h2 class="display">From The <span class="gold">Clinic</span></h2>
+    </div>
+
+    {% if products.length %}
+      <div class="product-grid">
+        {% for card in products %}{% include "partials/product-card.njk" %}{% endfor %}
+      </div>
+      <p class="centred" style="margin-top:3rem">
+        <a class="btn btn-line" href="/shop">See everything</a>
+      </p>
+    {% else %}
+      <p class="centred">Nothing is published yet.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="band band-line centred">
+  <div class="wrap">
+    <div class="narrow prose" style="text-align:left">
+      <p><strong>Why the disclosure matters.</strong> A front-of-pack total tells you the combined weight of a blend, not how it divides. A formula can be 90% of its cheapest ingredient and still print an impressive number.</p>
+      <p>Published human trials are run on specific compounds at specific doses. Comparing a product against that research is only possible if the per-compound figure is on the label — so ours are, on every product and on this website.</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

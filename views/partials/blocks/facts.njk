@@ -1,0 +1,74 @@
+{# The Supplement Facts panel — the centrepiece of the original page.
+   Unresolved values carry data-tbd, which renders in gold, so a placeholder
+   is impossible to mistake for a published figure. #}
+<section class="band{% if block.alt %} band-alt{% endif %}"{% if block.anchor %} id="{{ block.anchor }}"{% endif %}>
+  <div class="wrap">
+
+    <div class="head centred">
+      {% if block.eyebrow %}<p class="eyebrow">{{ block.eyebrow }}</p>{% endif %}
+      {% if block.heading %}<h2 class="display">{{ block.heading | inline }}</h2>{% endif %}
+    </div>
+
+    <div class="label-grid">
+      <div>
+        {% if block.paragraphs.length %}
+          <div class="prose">
+            {% for p in block.paragraphs %}<p>{{ p | inline }}</p>{% endfor %}
+          </div>
+        {% endif %}
+
+        {% if block.footnote %}
+          <p class="footnote">
+            {% if block.footnoteLabel %}<span>{{ block.footnoteLabel }}</span>{% endif %}
+            {{ block.footnote | inline }}
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="facts">
+        <h3>{{ block.panelTitle }}</h3>
+        <hr class="r-thin">
+        {% if block.serving %}
+          <p class="serving"><span>Serving size</span><span>{{ block.serving }}</span></p>
+        {% endif %}
+        {% if block.servingsPerContainer %}
+          <p class="serving"><span>Servings per container</span><span>{{ block.servingsPerContainer }}</span></p>
+        {% endif %}
+        <hr class="r-thick">
+
+        <table>
+          <thead><tr><th style="font-size:.6875rem">Per serving</th><td style="font-size:.6875rem">Amount</td></tr></thead>
+        </table>
+        <hr class="r-mid">
+
+        <table>
+          <tbody>
+            {% if block.totalRow %}
+              <tr class="total">
+                <th>{{ block.totalRow.name | inline }}</th>
+                <td>{% if block.totalRow.tbd %}<span data-tbd>{{ block.totalRow.amount }}</span>{% else %}{{ block.totalRow.amount }}{% endif %}</td>
+              </tr>
+            {% endif %}
+            {% for row in block.rows %}
+              <tr class="sub-row">
+                <th>{% if row.nameTbd %}<span data-tbd>{{ row.name | inline }}</span>{% else %}{{ row.name | inline }}{% endif %}</th>
+                <td>{% if row.tbd %}<span data-tbd>{{ row.amount }}</span>{% else %}{{ row.amount }}{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {% if block.footnotes.length %}
+          <hr class="r-thick">
+          <p class="foot">
+            {% for note in block.footnotes %}
+              <strong>{{ note.label }}:</strong>
+              {% if note.tbd %}<span data-tbd>{{ note.value | inline }}</span>{% else %}{{ note.value | inline }}{% endif %}{% if not loop.last %}<br>{% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>

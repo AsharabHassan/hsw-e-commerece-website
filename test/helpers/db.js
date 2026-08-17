@@ -43,9 +43,21 @@ export async function truncateAll() {
   await db.query(`truncate ${TABLES.join(', ')} restart identity cascade`);
 }
 
-/** Close the pool/instance. Call from a top-level t.after(). */
+/**
+ * Close the instance.
+ *
+ * Registered automatically on `beforeExit` rather than called per suite: node's
+ * test runner gives each FILE its own process but runs the suites inside it
+ * sequentially, so closing after one suite would leave the next one talking to
+ * an unmigrated database.
+ */
 export async function closeDb() {
-  const db = await setupDb();
-  await db.close();
+  if (!ready) return;
+  const db = await ready;
   ready = null;
+  await db.close();
 }
+
+process.once('beforeExit', () => {
+  closeDb().catch(() => {});
+});

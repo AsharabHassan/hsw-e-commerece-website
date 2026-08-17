@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>{% block title %}{{ storeName }}{% endblock %}</title>
+<meta name="description" content="{% block description %}Clinic-formulated supplements from Harley Street Wellness.{% endblock %}">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FFFFFF'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='16' fill='%23D4AF37' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
+
+<link rel="canonical" href="{% block canonical %}{{ baseUrl }}{{ currentPath }}{% endblock %}">
+
+<meta property="og:type" content="{% block ogType %}website{% endblock %}">
+<meta property="og:site_name" content="{{ storeName }}">
+<meta property="og:title" content="{% block ogTitle %}{{ storeName }}{% endblock %}">
+<meta property="og:description" content="{% block ogDescription %}Clinic-formulated supplements from Harley Street Wellness.{% endblock %}">
+<meta property="og:url" content="{{ baseUrl }}{{ currentPath }}">
+<meta property="og:locale" content="en_GB">
+{% block ogImage %}{% endblock %}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#D4AF37">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/hsw.css">
+<link rel="stylesheet" href="/css/shop.css">
+
+<script>
+/* Runs before first paint: without it the page flashes light before the
+   stored dark preference is applied. Mirrors the clinic site's convention. */
+(function(){
+  try{
+    var s = localStorage.getItem('hsw-theme');
+    var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+      document.documentElement.classList.add('js-anim');
+  }catch(e){}
+})();
+</script>
+
+{% block head %}{% endblock %}
+</head>
+
+<body>
+
+<p class="announce">Free tracked UK delivery over {{ freeShippingOver | money }} · Formulated at our Harley Street clinic</p>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="/">HSW</a>
+
+    <nav class="mainnav" aria-label="Primary">
+      {# currentPath can be absent if a request failed before the locals
+         middleware ran; the chrome must still render. #}
+      <a href="/shop"{% if "/shop" in (currentPath or "") %} aria-current="page"{% endif %}>Shop</a>
+      {% for cat in navCategories %}
+        <a href="/shop?category={{ cat.slug }}">{{ cat.name }}</a>
+      {% endfor %}
+      <a href="/shipping-returns">Delivery</a>
+    </nav>
+
+    <div class="util">
+      <button class="icon-btn" id="themeToggle" aria-label="Switch colour theme">
+        <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke-linecap="round"/></svg>
+      </button>
+
+      <a class="icon-btn basket-link" href="/cart" aria-label="Basket{% if cartCount %}, {{ cartCount }} item{{ 's' if cartCount != 1 }}{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 002 1.6h7.8a2 2 0 002-1.6L21 7H6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/></svg>
+        {% if cartCount %}<span class="basket-count">{{ cartCount }}</span>{% endif %}
+      </a>
+
+      {% if user %}
+        <a class="btn btn-line btn-book" href="/account">{{ 'Admin' if user.is_admin else 'Account' }}</a>
+      {% else %}
+        <a class="btn btn-line btn-book" href="/account/login">Sign In</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{% if flash %}
+  <div class="wrap"><p class="flash flash-{{ flash.kind }}">{{ flash.message }}</p></div>
+{% endif %}
+
+<main id="top">
+{% block content %}{% endblock %}
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-cols">
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="/shop">All products</a></li>
+          {% for cat in navCategories %}
+            <li><a href="/shop?category={{ cat.slug }}">{{ cat.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h4>Clinic</h4>
+        <ul>
+          <li><a href="https://harleystreetmedicalwellness.co.uk/">IV therapy</a></li>
+          <li><a href="https://harleystreetmedicalwellness.co.uk/">EBOO</a></li>
+          <li><a href="https://harleystreetmedicalwellness.co.uk/">Metabolic health</a></li>
+          <li><a href="https://harleystreetmedicalwellness.co.uk/">Membership</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Orders</h4>
+        <ul>
+          <li><a href="/shipping-returns">Delivery &amp; returns</a></li>
+          <li><a href="/account">Your orders</a></li>
+          <li><a href="/terms">Terms of sale</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>{{ storeName }}</h4>
+        <ul>
+          <li data-tbd>Registered address — TBD</li>
+          <li><a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="legal">
+      <p>Food supplements should not be used as a substitute for a varied and balanced diet and a healthy lifestyle. Do not exceed the stated dose. Keep out of reach of children. Not suitable for pregnant or breastfeeding women. If you are taking medication or under medical supervision, consult your doctor or pharmacist before use.</p>
+      <p>References to published research describe findings reported for the individual compounds. They are not claims made for this product, and this page is not medical advice.</p>
+      <p>&copy; <span id="yr">{{ year }}</span> <span data-tbd>{{ storeName }} Ltd</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

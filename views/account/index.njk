@@ -1,0 +1,47 @@
+{% extends "layout.njk" %}
+{% block title %}Your Account | {{ storeName }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Account</p>
+      <h1 class="display">{{ user.name or 'Your' }} <span class="gold">Orders</span></h1>
+      <p class="sub">{{ user.email }}</p>
+    </div>
+
+    <div class="narrow">
+      {% if user.is_admin %}
+        <p class="flash flash-ok">You have administrator access. <a href="/admin">Open the admin panel</a>.</p>
+      {% endif %}
+
+      {% if orders.length %}
+        <table class="admin-table">
+          <caption class="visually-hidden">Your order history</caption>
+          <thead><tr><th scope="col">Reference</th><th scope="col">Placed</th><th scope="col">Items</th><th scope="col">Total</th><th scope="col">Status</th></tr></thead>
+          <tbody>
+            {% for order in orders %}
+              <tr>
+                <th scope="row"><a class="mono" href="/account/orders/{{ order.id }}">{{ order.public_token | orderRef }}</a></th>
+                <td>{{ order.created_at | date }}</td>
+                <td>{{ order.items.length }}</td>
+                <td>{{ order.total_pence | money }}</td>
+                <td><span class="status status-{{ order.status }}">{{ order.status }}</span></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="centred">You have not placed an order yet.</p>
+        <p class="centred btn-row"><a class="btn btn-gold" href="/shop">Browse the range</a></p>
+      {% endif %}
+
+      <form method="post" action="/account/logout" style="margin-top:3rem;text-align:center">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <button class="btn btn-line" type="submit">Sign Out</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "admin/layout.njk" %}
+{% block title %}{% if product %}{{ product.name }}{% else %}New Product{% endif %} | Admin{% endblock %}
+
+{% block admin %}
+<div class="head admin-head">
+  <div>
+    <p class="eyebrow">Admin</p>
+    <h1 class="display">{% if product %}Edit Product{% else %}New Product{% endif %}</h1>
+  </div>
+  {% if product %}<a class="btn btn-line" href="/shop/{{ product.slug }}">View page &rarr;</a>{% endif %}
+</div>
+
+<form method="post" action="{% if product %}/admin/products/{{ product.id }}{% else %}/admin/products/new{% endif %}" class="admin-form" novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+  <div class="field-row">
+    <div class="field{% if errors.name %} has-error{% endif %}">
+      <label for="name">Name</label>
+      <input id="name" name="name" required value="{{ values.name }}">
+      {% if errors.name %}<p class="field-error">{{ errors.name }}</p>{% endif %}
+    </div>
+
+    <div class="field{% if errors.slug %} has-error{% endif %}">
+      <label for="slug">URL slug</label>
+      <input id="slug" name="slug" required value="{{ values.slug }}">
+      <small>The page lives at <code>/shop/</code> + this slug. Changing it breaks existing links.</small>
+      {% if errors.slug %}<p class="field-error">{{ errors.slug }}</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="subtitle">Subtitle</label>
+    <input id="subtitle" name="subtitle" value="{{ values.subtitle }}">
+    <small>Shown under the product name in the hero.</small>
+  </div>
+
+  <div class="field-row">
+    <div class="field{% if errors.price %} has-error{% endif %}">
+      <label for="price">Price (&pound;)</label>
+      <input id="price" name="price" required value="{{ values.price }}" inputmode="decimal">
+      <small>Including VAT. Stored internally as pence, so it cannot drift.</small>
+      {% if errors.price %}<p class="field-error">{{ errors.price }}</p>{% endif %}
+    </div>
+
+    <div class="field">
+      <label for="category_id">Category</label>
+      <select id="category_id" name="category_id">
+        <option value="">&mdash; none &mdash;</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}"{% if values.category_id and (values.category_id | string) == (cat.id | string) %} selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="summary">Summary</label>
+    <input id="summary" name="summary" value="{{ values.summary }}">
+    <small>One line above the name in the buy band, e.g. &ldquo;120 Capsules &middot; 60-Day Supply&rdquo;.</small>
+  </div>
+
+  <div class="field">
+    <label for="meta_description">Meta description</label>
+    <textarea id="meta_description" name="meta_description" rows="2" maxlength="300">{{ values.meta_description }}</textarea>
+    <small>Used in search results and link previews. Around 150 characters.</small>
+  </div>
+
+  <fieldset class="field-check-group">
+    <legend>State</legend>
+
+    <label class="check">
+      <input type="checkbox" name="is_published"{% if values.is_published %} checked{% endif %}>
+      <span><strong>Published</strong> &mdash; visible in the shop. Unpublished products return 404 to customers.</span>
+    </label>
+
+    <label class="check">
+      <input type="checkbox" name="is_placeholder"{% if values.is_placeholder %} checked{% endif %}>
+      <span><strong>Placeholder</strong> &mdash; shows a &ldquo;not for sale&rdquo; notice and cannot be added to a basket. Untick this only once the copy, the price and the compliance checks are real.</span>
+    </label>
+  </fieldset>
+
+  <div class="field{% if errors.story_blocks %} has-error{% endif %}">
+    <label for="story_blocks">Page content &mdash; story blocks (JSON)</label>
+    <textarea id="story_blocks" name="story_blocks" rows="24" spellcheck="false" class="mono">{{ values.story_blocks }}</textarea>
+    <small>
+      A JSON array of typed blocks, rendered down the product page in order.
+      Types available: <code>{{ blockTypes | join(", ") }}</code>.
+      Text is sanitised when you save: emphasis, bold, line breaks, the gold
+      accent span and links survive; everything else is escaped. Body copy is
+      an array of paragraphs, not one blob of HTML.
+    </small>
+    {% if errors.story_blocks %}<p class="field-error">{{ errors.story_blocks }}</p>{% endif %}
+  </div>
+
+  <button class="btn btn-gold" type="submit">Save</button>
+</form>
+
+{% if product %}
+  <h2 class="display" style="margin-top:4rem">Images</h2>
+
+  {% if product.images.length %}
+    <div class="admin-image-grid">
+      {% for image in product.images %}
+        <figure>
+          <img src="{{ image.path }}" alt="{{ image.alt }}" width="240" height="240" loading="lazy">
+          <figcaption>{{ image.alt or "No alt text" }}</figcaption>
+          <form method="post" action="/admin/products/{{ product.id }}/images/{{ image.id }}/delete">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <button class="btn-inline btn-remove" type="submit">Delete</button>
+          </form>
+        </figure>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No images yet. The product page falls back to the capsule illustration.</p>
+  {% endif %}
+
+  <form method="post" action="/admin/products/{{ product.id }}/images" enctype="multipart/form-data" class="admin-form">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <div class="field-row">
+      <div class="field">
+        <label for="image">Image file</label>
+        <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/avif" required>
+        <small>JPEG, PNG, WebP or AVIF. Up to 5MB. Square images sit best in the grid.</small>
+      </div>
+      <div class="field">
+        <label for="alt">Alt text</label>
+        <input id="alt" name="alt" maxlength="200">
+        <small>Describe the image for screen readers and for when it fails to load.</small>
+      </div>
+    </div>
+    <button class="btn btn-line" type="submit">Upload Image</button>
+  </form>
+
+  <h2 class="display" style="margin-top:4rem">Delete</h2>
+  <form method="post" action="/admin/products/{{ product.id }}/delete" class="admin-form">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <p>Deleting removes this product and its images. Past orders keep their own
+       copy of the name and price, so order history is unaffected.</p>
+    <button class="btn btn-line btn-danger" type="submit">Delete This Product</button>
+  </form>
+{% endif %}
+{% endblock %}

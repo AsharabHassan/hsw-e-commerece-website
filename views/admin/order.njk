@@ -1,0 +1,46 @@
+{% extends "admin/layout.njk" %}
+{% block title %}Order {{ order.public_token | orderRef }} | Admin{% endblock %}
+
+{% block admin %}
+<div class="head admin-head">
+  <div>
+    <p class="eyebrow">Admin &middot; Order</p>
+    <h1 class="display mono">{{ order.public_token | orderRef }}</h1>
+  </div>
+  <a class="btn btn-line" href="/admin/orders">All orders &rarr;</a>
+</div>
+
+{% include "partials/order-detail.njk" %}
+
+<h2 class="display" style="margin-top:3rem">Payment</h2>
+<dl class="order-meta">
+  <div><dt>Stripe session</dt><dd class="mono">{{ order.stripe_session_id or "—" }}</dd></div>
+  <div><dt>Payment intent</dt><dd class="mono">{{ order.stripe_payment_intent or "—" }}</dd></div>
+  <div><dt>Account</dt><dd>{% if order.user_id %}Registered customer{% else %}Guest checkout{% endif %}</dd></div>
+</dl>
+
+<h2 class="display" style="margin-top:3rem">Update Status</h2>
+
+<form method="post" action="/admin/orders/{{ order.id }}/status" class="admin-form">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+  <div class="field">
+    <label for="status">Status</label>
+    <select id="status" name="status">
+      {% for status in statuses %}
+        {% if status != "paid" %}
+          <option value="{{ status }}"{% if order.status == status %} selected{% endif %}>{{ status }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    <small>
+      <strong>Paid</strong> is deliberately not in this list. Payment state is
+      owned by the verified Stripe webhook, so this panel and Stripe cannot
+      disagree about who has been charged. Refund or cancel a payment in the
+      Stripe dashboard; this shop will follow.
+    </small>
+  </div>
+
+  <button class="btn btn-gold" type="submit">Update Status</button>
+</form>
+{% endblock %}

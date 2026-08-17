@@ -1,0 +1,62 @@
+{% extends "layout.njk" %}
+
+{% block title %}Delivery &amp; Returns | {{ storeName }}{% endblock %}
+{% block description %}Delivery times, costs, and how to return an order to {{ storeName }} within 14 days.{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Orders</p>
+      <h1 class="display">Delivery &amp; <span class="gold">Returns</span></h1>
+      <p class="sub">Last updated {{ updated }}</p>
+    </div>
+
+    <div class="narrow prose legal-doc">
+
+      <p class="placeholder-notice" role="note">
+        <strong>For the site operator:</strong> the statutory rights below are
+        correct as written, but the operational details &mdash; carrier,
+        dispatch cut-off, returns address &mdash; are marked
+        <span data-tbd>TBD</span> and must be filled in before launch.
+      </p>
+
+      <h2>Delivery</h2>
+      <p>We deliver to addresses in the United Kingdom only.</p>
+
+      <table class="legal-table">
+        <thead><tr><th scope="col">Service</th><th scope="col">Cost</th><th scope="col">Time</th></tr></thead>
+        <tbody>
+          <tr><td>Tracked UK delivery</td><td>{{ shippingPence | money if shippingPence else "£4.95" }}</td><td><span data-tbd>TBD &mdash; state working days</span></td></tr>
+          <tr><td>Orders over {{ freeShippingOver | money }}</td><td>Free</td><td><span data-tbd>TBD</span></td></tr>
+        </tbody>
+      </table>
+
+      <p>Orders placed before <span data-tbd>TBD &mdash; cut-off time</span> on a working day are dispatched the same day. Orders placed at a weekend or on a bank holiday are dispatched on the next working day. We will email you tracking details when your order leaves us.</p>
+      <p>Our carrier is <span data-tbd>TBD</span>.</p>
+
+      <h2>Your 14-day right to cancel</h2>
+      <p>You have the right to cancel your order within <strong>14 days</strong> without giving any reason. This is your statutory right under the Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013.</p>
+      <p>The 14 days run from the day you, or someone you nominated, receive the goods. To cancel, tell us clearly in writing &mdash; an email to <a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a> saying you wish to cancel is enough. You do not need to use a special form.</p>
+      <p>Once you have told us, you have a further 14 days to send the goods back.</p>
+
+      <h2>Refunds</h2>
+      <p>We refund all payments received from you, including the standard delivery cost, within 14 days of receiving the goods back &mdash; or, if earlier, within 14 days of you providing evidence that you have returned them. Refunds go to the payment method you used.</p>
+      <p>If you chose a more expensive delivery option than our standard service, we refund the standard cost, not the premium.</p>
+      <p>We may reduce a refund to reflect any reduction in the value of the goods caused by handling them more than was necessary to establish their nature and characteristics.</p>
+
+      <h2>What cannot be returned</h2>
+      <p>Sealed food supplements that have been unsealed after delivery cannot be returned for hygiene reasons, under regulation 28(3) of the 2013 Regulations. An unopened, sealed product may be returned as above.</p>
+      <p>This does <strong>not</strong> limit your rights if a product is faulty, damaged, or not as described &mdash; in that case, contact us and we will put it right, whether or not the seal is broken.</p>
+
+      <h2>Faulty or damaged goods</h2>
+      <p>Under the Consumer Rights Act 2015, goods must be as described, fit for purpose and of satisfactory quality. If something arrives damaged or is not what you ordered, email <a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a> with your order reference and a photograph. We will arrange a replacement or a full refund, and we cover return postage.</p>
+
+      <h2>Return address</h2>
+      <p>Please do not send anything back before contacting us, so we can give you a reference. Our returns address is <span data-tbd>TBD &mdash; returns address</span>.</p>
+      <p>Except where goods are faulty, you pay the cost of returning them.</p>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

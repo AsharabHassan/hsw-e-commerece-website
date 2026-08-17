@@ -1,0 +1,12 @@
+{# Story-block dispatcher.
+   An unknown type renders nothing rather than throwing — content saved by an
+   older admin build should never take a product page down. #}
+{% for block in blocks %}
+  {% if block.type == 'split' %}{% include "partials/blocks/split.njk" %}
+  {% elif block.type == 'steps' %}{% include "partials/blocks/steps.njk" %}
+  {% elif block.type == 'facts' %}{% include "partials/blocks/facts.njk" %}
+  {% elif block.type == 'gallery' %}{% include "partials/blocks/gallery.njk" %}
+  {% elif block.type == 'faq' %}{% include "partials/blocks/faq.njk" %}
+  {% elif block.type == 'prose' %}{% include "partials/blocks/prose.njk" %}
+  {% endif %}
+{% endfor %}

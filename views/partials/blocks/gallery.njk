@@ -1,0 +1,39 @@
+{# Body copy, an optional callout, and the photography row. A slot with no
+   uploaded image keeps the original labelled placeholder treatment, so an
+   empty slot reads as "photography pending" rather than as a broken image. #}
+<section class="band{% if block.alt %} band-alt{% endif %}"{% if block.anchor %} id="{{ block.anchor }}"{% endif %}>
+  <div class="wrap">
+
+    <div class="head centred">
+      {% if block.eyebrow %}<p class="eyebrow">{{ block.eyebrow }}</p>{% endif %}
+      {% if block.heading %}<h2 class="display">{{ block.heading | inline }}</h2>{% endif %}
+    </div>
+
+    <div class="narrow">
+      {% if block.paragraphs.length %}
+        <div class="prose">
+          {% for p in block.paragraphs %}<p>{{ p | inline }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      {% if block.callout %}
+        <div class="callout">
+          <p><strong>{{ block.callout.title }}</strong>{{ block.callout.body | inline }}</p>
+        </div>
+      {% endif %}
+
+      {% if block.slots.length %}
+        <div class="shots" aria-label="Product photography">
+          {% for slot in block.slots %}
+            {% if slot.image %}
+              <img class="shot shot-filled" src="{{ slot.image }}" alt="{{ slot.caption }}" loading="lazy" width="600" height="600">
+            {% else %}
+              <div class="shot"><b>{{ slot.label }}</b>{{ slot.caption }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>

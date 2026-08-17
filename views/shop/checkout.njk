@@ -1,0 +1,85 @@
+{% extends "layout.njk" %}
+
+{% block title %}Checkout | {{ storeName }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Secure Checkout</p>
+      <h1 class="display">Delivery <span class="gold">Details</span></h1>
+    </div>
+
+    {% if errors._ %}<p class="flash flash-error">{{ errors._ }}</p>{% endif %}
+
+    <div class="checkout-grid">
+      <form method="post" action="/checkout" class="checkout-form" novalidate>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+        <div class="field{% if errors.email %} has-error{% endif %}">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="email" required
+                 value="{{ values.email }}">
+          <small>Your receipt and order updates go here.</small>
+          {% if errors.email %}<p class="field-error">{{ errors.email }}</p>{% endif %}
+        </div>
+
+        <div class="field{% if errors.ship_name %} has-error{% endif %}">
+          <label for="ship_name">Full name</label>
+          <input id="ship_name" name="ship_name" autocomplete="name" required value="{{ values.ship_name }}">
+          {% if errors.ship_name %}<p class="field-error">{{ errors.ship_name }}</p>{% endif %}
+        </div>
+
+        <div class="field{% if errors.ship_line1 %} has-error{% endif %}">
+          <label for="ship_line1">Address</label>
+          <input id="ship_line1" name="ship_line1" autocomplete="address-line1" required value="{{ values.ship_line1 }}">
+          {% if errors.ship_line1 %}<p class="field-error">{{ errors.ship_line1 }}</p>{% endif %}
+        </div>
+
+        <div class="field">
+          <label for="ship_line2">Address line 2 <span class="optional">optional</span></label>
+          <input id="ship_line2" name="ship_line2" autocomplete="address-line2" value="{{ values.ship_line2 }}">
+        </div>
+
+        <div class="field-row">
+          <div class="field{% if errors.ship_city %} has-error{% endif %}">
+            <label for="ship_city">Town or city</label>
+            <input id="ship_city" name="ship_city" autocomplete="address-level2" required value="{{ values.ship_city }}">
+            {% if errors.ship_city %}<p class="field-error">{{ errors.ship_city }}</p>{% endif %}
+          </div>
+
+          <div class="field{% if errors.ship_postcode %} has-error{% endif %}">
+            <label for="ship_postcode">Postcode</label>
+            <input id="ship_postcode" name="ship_postcode" autocomplete="postal-code" required
+                   value="{{ values.ship_postcode }}">
+            {% if errors.ship_postcode %}<p class="field-error">{{ errors.ship_postcode }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="ship_phone">Phone <span class="optional">optional, for the courier</span></label>
+          <input id="ship_phone" name="ship_phone" type="tel" autocomplete="tel" value="{{ values.ship_phone }}">
+        </div>
+
+        <p class="checkout-note">We deliver within the United Kingdom only. Card details are entered on Stripe&rsquo;s secure page &mdash; they never reach our servers.</p>
+
+        <button class="btn btn-gold" type="submit">Continue to Payment</button>
+      </form>
+
+      <aside class="order-summary">
+        <h2 class="display">Your Order</h2>
+        <ul>
+          {% for line in basket.lines %}
+            <li><span>{{ line.qty }} &times; {{ line.product.name }}</span><span>{{ line.line_pence | money }}</span></li>
+          {% endfor %}
+        </ul>
+        <p><span>Subtotal</span><span>{{ basket.subtotal_pence | money }}</span></p>
+        <p><span>Delivery</span><span>{% if basket.shipping_pence %}{{ basket.shipping_pence | money }}{% else %}Free{% endif %}</span></p>
+        <p class="cart-total"><span>Total</span><span>{{ basket.total_pence | money }}</span></p>
+        <p class="summary-back"><a href="/cart">Edit basket</a></p>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "layout.njk" %}
+
+{% block title %}Terms of Sale | {{ storeName }}{% endblock %}
+{% block description %}The terms on which {{ storeName }} sells products through this website.{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Legal</p>
+      <h1 class="display">Terms of <span class="gold">Sale</span></h1>
+      <p class="sub">Last updated {{ updated }}</p>
+    </div>
+
+    <div class="narrow prose legal-doc">
+
+      <p class="placeholder-notice" role="note">
+        <strong>For the site operator:</strong> this document is a working
+        draft written to the shape of UK consumer law. It carries visible
+        <span data-tbd>TBD</span> markers where a real company detail is
+        needed, and it has not been reviewed by a solicitor. Have it checked
+        before you take live payments &mdash; you are selling under a medical
+        clinic&rsquo;s name, which raises the bar rather than lowering it.
+      </p>
+
+      <h2>1. Who we are</h2>
+      <p>This website is operated by <span data-tbd>{{ storeName }} Ltd &mdash; confirm the exact registered name</span>, a company registered in England and Wales under company number <span data-tbd>TBD</span>, with its registered office at <span data-tbd>TBD &mdash; registered address</span>. Our VAT number is <span data-tbd>TBD</span>.</p>
+      <p>You can contact us at <a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a>.</p>
+
+      <h2>2. These terms</h2>
+      <p>These are the terms on which we supply products to you. Please read them before placing an order. By placing an order you confirm that you accept them, that you are at least 18 years old, and that you are ordering for delivery within the United Kingdom.</p>
+
+      <h2>3. How a contract is formed</h2>
+      <p>Placing an order is an offer to buy. Our acceptance happens when payment is confirmed, at which point a contract comes into existence between us. If we cannot accept your order &mdash; because an item is unavailable, because of an error in the price or description, or because we are unable to authorise your payment &mdash; we will tell you and will not charge you.</p>
+
+      <h2>4. Prices and payment</h2>
+      <p>Prices are shown in pounds sterling and include VAT where applicable. Delivery costs are shown separately before you pay.</p>
+      <p>We take reasonable care to price correctly, but errors happen. If we discover an error in the price of the goods you have ordered, we will contact you to ask whether you wish to continue at the correct price or cancel. If we cannot reach you, we will treat the order as cancelled and refund you in full.</p>
+      <p>Card payments are processed by Stripe. We do not receive or store your card details.</p>
+
+      <h2>5. Delivery</h2>
+      <p>We deliver to addresses in the United Kingdom only. Estimated delivery times are given on the <a href="/shipping-returns">Delivery &amp; Returns</a> page. If we miss a delivery deadline for any products, you may treat the contract as at an end if we have failed to deliver within an additional period you have given us, or if the delivery date was essential and we did not meet it.</p>
+      <p>Goods are your responsibility from the time they are delivered to the address you gave us. You own them once we have received payment in full.</p>
+
+      <h2>6. Your right to cancel</h2>
+      <p>Under the Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, you have the right to cancel this contract within <strong>14 days</strong> without giving any reason. The cancellation period ends 14 days after the day on which you, or a carrier you nominated, receive the goods.</p>
+      <p>To exercise the right, tell us clearly in writing &mdash; an email to <a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a> is sufficient. Full details, including how to return goods and when we refund, are on the <a href="/shipping-returns">Delivery &amp; Returns</a> page.</p>
+      <p>For hygiene reasons, sealed food supplements that have been unsealed after delivery are not eligible for return under regulation 28(3). This does not affect your legal rights in relation to faulty or misdescribed goods.</p>
+
+      <h2>7. Faulty or misdescribed goods</h2>
+      <p>We are under a legal duty to supply goods that conform to this contract. Under the Consumer Rights Act 2015, goods must be as described, fit for purpose and of satisfactory quality. Nothing in these terms affects your legal rights.</p>
+
+      <h2>8. Food supplements</h2>
+      <p>The products sold here are food supplements. They are not medicines, and they are not intended to diagnose, treat, cure or prevent any disease. They should not be used as a substitute for a varied and balanced diet and a healthy lifestyle.</p>
+      <p>Do not exceed the stated dose. Keep out of the reach of children. If you are pregnant, breastfeeding, taking medication or under medical supervision, consult your doctor or pharmacist before use.</p>
+      <p>Descriptions of published research on this website describe findings reported for individual compounds. They are not claims made for our products, and nothing on this website is medical advice or a substitute for a consultation.</p>
+
+      <h2>9. Our liability</h2>
+      <p>We do not exclude or limit our liability to you where it would be unlawful to do so. This includes liability for death or personal injury caused by our negligence, for fraud or fraudulent misrepresentation, and for breach of your legal rights in relation to the goods.</p>
+      <p>We are not liable for business losses. We supply the products for domestic and private use only.</p>
+
+      <h2>10. Complaints and disputes</h2>
+      <p>If something has gone wrong, please contact us first at <a href="mailto:{{ storeEmail }}">{{ storeEmail }}</a>. These terms are governed by English law and you can bring legal proceedings in the English courts. If you live in Scotland or Northern Ireland, you may also bring proceedings in your own country&rsquo;s courts.</p>
+
+      <h2>11. Changes to these terms</h2>
+      <p>We may amend these terms from time to time. The terms that apply to your order are those published on this page at the moment you placed it.</p>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

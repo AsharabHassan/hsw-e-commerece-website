@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% block title %}Order {{ order.public_token | orderRef }} | {{ storeName }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      {% if order.status == 'pending' %}
+        <p class="eyebrow">Order received</p>
+        <h1 class="display">Payment <span class="gold">Processing</span></h1>
+        <p class="sub">
+          {% if justReturned %}
+            Thank you. Stripe is confirming the payment now &mdash; this usually
+            takes a few seconds. Refresh this page in a moment to see it
+            confirmed. Nothing further is needed from you.
+          {% else %}
+            This order has not been paid yet.
+          {% endif %}
+        </p>
+      {% elif order.status == 'cancelled' %}
+        <p class="eyebrow">Cancelled</p>
+        <h1 class="display">Order <span class="gold">Cancelled</span></h1>
+        <p class="sub">This order was cancelled and has not been charged.</p>
+      {% elif order.status == 'refunded' %}
+        <p class="eyebrow">Refunded</p>
+        <h1 class="display">Order <span class="gold">Refunded</span></h1>
+      {% elif order.status == 'shipped' %}
+        <p class="eyebrow">On its way</p>
+        <h1 class="display">Order <span class="gold">Shipped</span></h1>
+      {% else %}
+        <p class="eyebrow">Confirmed</p>
+        <h1 class="display">Thank <span class="gold">You</span></h1>
+        <p class="sub">Your payment has been received and your order is being prepared.</p>
+      {% endif %}
+    </div>
+
+    <div class="narrow">
+      {% include "partials/order-detail.njk" %}
+
+      <p class="centred" style="margin-top:2.5rem">
+        {% if user %}
+          <a class="btn btn-line" href="/account">Your orders</a>
+        {% else %}
+          <a class="btn btn-line" href="/account/register">Create an account to track this order</a>
+        {% endif %}
+        <a class="btn btn-line" href="/shop">Keep shopping</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

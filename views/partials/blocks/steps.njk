@@ -1,0 +1,24 @@
+{# Numbered sequence. Markup matches the original "Clear Out. Rebuild. Run."
+   section: an ordered list where each item carries a number, a name with a
+   compound sub-label, and body copy. #}
+<section class="band{% if block.alt %} band-alt{% endif %}"{% if block.anchor %} id="{{ block.anchor }}"{% endif %}>
+  <div class="wrap">
+
+    <div class="head centred">
+      {% if block.eyebrow %}<p class="eyebrow">{{ block.eyebrow }}</p>{% endif %}
+      {% if block.heading %}<h2 class="display">{{ block.heading | inline }}</h2>{% endif %}
+      {% if block.intro %}<p class="sub">{{ block.intro | inline }}</p>{% endif %}
+    </div>
+
+    <ol class="steps">
+      {% for item in block.items %}
+        <li>
+          <span class="step-n">{{ item.n }}</span>
+          <h3 class="display step-name">{{ item.title }}{% if item.sub %}<small>{{ item.sub }}</small>{% endif %}</h3>
+          <p class="step-body">{{ item.body | inline }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+
+  </div>
+</section>

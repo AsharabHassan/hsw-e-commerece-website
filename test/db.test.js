@@ -1,10 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { setupDb, truncateAll, closeDb } from './helpers/db.js';
+import { setupDb, truncateAll } from './helpers/db.js';
 
 test('database layer', async (t) => {
   const db = await setupDb();
-  t.after(closeDb);
 
   await t.test('migrations are idempotent', async () => {
     const { migrate } = await import('../db/migrate.js');

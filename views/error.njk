@@ -1,0 +1,20 @@
+{% extends "layout.njk" %}
+
+{% block title %}{{ title }} | {{ storeName }}{% endblock %}
+{% block description %}{{ heading }}{% endblock %}
+
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="band centred">
+  <div class="wrap">
+    <p class="eyebrow">Error {{ status }}</p>
+    <h1 class="display">{{ heading }}</h1>
+    <p class="sub">{{ message }}</p>
+    <p style="margin-top:2.5rem">
+      <a class="btn btn-gold" href="/shop">Back to the shop</a>
+      <a class="btn btn-line" href="/">Home</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "admin/layout.njk" %}
+{% block title %}Orders | Admin{% endblock %}
+
+{% block admin %}
+<div class="head">
+  <p class="eyebrow">Admin</p>
+  <h1 class="display">Orders</h1>
+</div>
+
+<nav class="filter-row" aria-label="Filter by status">
+  <a class="filter-chip{% if not activeStatus %} is-active{% endif %}" href="/admin/orders">All</a>
+  {% for status in statuses %}
+    <a class="filter-chip{% if activeStatus == status %} is-active{% endif %}"
+       href="/admin/orders?status={{ status }}">{{ status }}</a>
+  {% endfor %}
+</nav>
+
+{% if orders.length %}
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th scope="col">Reference</th>
+        <th scope="col">Placed</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Items</th>
+        <th scope="col">Total</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+        <tr>
+          <th scope="row"><a class="mono" href="/admin/orders/{{ order.id }}">{{ order.public_token | orderRef }}</a></th>
+          <td>{{ order.created_at | date({withTime: true}) }}</td>
+          <td>{{ order.email }}{% if not order.user_id %}<br><small>guest</small>{% endif %}</td>
+          <td>{{ order.items.length }}</td>
+          <td>{{ order.total_pence | money }}</td>
+          <td><span class="status status-{{ order.status }}">{{ order.status }}</span></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No orders{% if activeStatus %} with that status{% endif %} yet.</p>
+{% endif %}
+{% endblock %}

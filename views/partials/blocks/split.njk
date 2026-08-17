@@ -1,0 +1,31 @@
+{# Heading, an optional code-backed illustration, then body copy.
+   Markup matches the original "You Can't Just Eat Pomegranates" section. #}
+<section class="band{% if block.alt %} band-alt{% endif %}"{% if block.anchor %} id="{{ block.anchor }}"{% endif %}>
+  <div class="wrap centred">
+
+    <div class="head">
+      {% if block.eyebrow %}<p class="eyebrow">{{ block.eyebrow }}</p>{% endif %}
+      {% if block.heading %}<h2 class="display">{{ block.heading | inline }}</h2>{% endif %}
+    </div>
+
+    {% if block.media == 'seedfield' %}
+      {# Thirty seeds, ten filled: the 1-in-3 conversion ratio, counted.
+         data-on marks a filled seed; seedfield.js staggers their arrival. #}
+      <div class="seedfield" id="seedfield" role="img" aria-label="{{ block.mediaLabel }}">
+        {% for i in range(0, 30) %}
+          <span class="seed"{% if i % 3 == 0 %} data-on{% endif %}></span>
+        {% endfor %}
+      </div>
+      {% if block.mediaCaption %}
+        <p class="seed-key">{{ block.mediaCaption | inline }}</p>
+      {% endif %}
+    {% endif %}
+
+    {% if block.paragraphs.length %}
+      <div class="narrow prose" style="text-align:left">
+        {% for p in block.paragraphs %}<p>{{ p | inline }}</p>{% endfor %}
+      </div>
+    {% endif %}
+
+  </div>
+</section>

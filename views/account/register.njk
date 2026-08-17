@@ -1,0 +1,52 @@
+{% extends "layout.njk" %}
+{% block title %}Create an Account | {{ storeName }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="band">
+  <div class="wrap">
+    <div class="head centred">
+      <p class="eyebrow">Account</p>
+      <h1 class="display">Create an <span class="gold">Account</span></h1>
+      <p class="sub">Optional. It keeps your order history and delivery details for next time.</p>
+    </div>
+
+    <form method="post" action="/account/register" class="auth-form" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <input type="hidden" name="next" value="{{ next }}">
+
+      {% if errors._ %}<p class="flash flash-error">{{ errors._ }}</p>{% endif %}
+
+      <div class="field{% if errors.name %} has-error{% endif %}">
+        <label for="name">Your name</label>
+        <input id="name" name="name" autocomplete="name" required value="{{ values.name }}">
+        {% if errors.name %}<p class="field-error">{{ errors.name }}</p>{% endif %}
+      </div>
+
+      <div class="field{% if errors.email %} has-error{% endif %}">
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="email" required value="{{ values.email }}">
+        <small>If you have ordered as a guest with this address, those orders will be added to your account.</small>
+        {% if errors.email %}<p class="field-error">{{ errors.email }}</p>{% endif %}
+      </div>
+
+      <div class="field{% if errors.password %} has-error{% endif %}">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" required minlength="10">
+        <small>At least 10 characters.</small>
+        {% if errors.password %}<p class="field-error">{{ errors.password }}</p>{% endif %}
+      </div>
+
+      <div class="field{% if errors.password_confirm %} has-error{% endif %}">
+        <label for="password_confirm">Confirm password</label>
+        <input id="password_confirm" name="password_confirm" type="password" autocomplete="new-password" required>
+        {% if errors.password_confirm %}<p class="field-error">{{ errors.password_confirm }}</p>{% endif %}
+      </div>
+
+      <button class="btn btn-gold" type="submit">Create Account</button>
+
+      <p class="auth-alt">Already registered? <a href="/account/login">Sign in</a>.</p>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "layout.njk" %}
+
+{% block title %}{{ product.name }}{% if product.subtitle %} — {{ product.subtitle }}{% endif %} | {{ storeName }}{% endblock %}
+{% block description %}{{ product.meta_description or product.summary or product.name }}{% endblock %}
+{% block canonical %}{{ baseUrl }}/shop/{{ product.slug }}{% endblock %}
+{% block ogType %}product{% endblock %}
+{% block ogTitle %}{{ product.name }} | {{ storeName }}{% endblock %}
+{% block ogDescription %}{{ product.meta_description or product.summary or product.name }}{% endblock %}
+{% block ogImage %}{% if product.images.length %}<meta property="og:image" content="{{ baseUrl }}{{ product.images[0].path }}">{% endif %}{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">{{ jsonLd | safe }}</script>
+{% endblock %}
+
+{% block content %}
+
+{# ------------------------------------------------------------------ HERO #}
+<section class="hero">
+  <div class="wrap centred">
+    {% if product.category_name %}<p class="eyebrow">{{ product.category_name }}</p>{% endif %}
+    <h1 class="display">{{ product.name }}</h1>
+    {% if product.subtitle %}<p class="sub">{{ product.subtitle }}</p>{% endif %}
+
+    {% if product.is_placeholder %}
+      {% include "partials/placeholder-notice.njk" %}
+    {% endif %}
+
+    {% if product.images.length %}
+      <div class="hero-shot">
+        <img src="{{ product.images[0].path }}" alt="{{ product.images[0].alt or product.name }}"
+             width="800" height="800" fetchpriority="high">
+      </div>
+    {% else %}
+      {# The capsule illustration stands in until product photography exists. #}
+      <div class="vessel" role="img" aria-label="Illustration of a capsule">
+        <svg viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <defs><clipPath id="inner"><rect x="46" y="18" width="108" height="284" rx="54"/></clipPath></defs>
+          <g clip-path="url(#inner)" fill="#D4AF37">
+            <circle cx="78"  cy="42"  r="14" opacity=".85"/><circle cx="112" cy="52"  r="16" opacity=".95"/>
+            <circle cx="136" cy="76"  r="13" opacity=".7"/><circle cx="70"  cy="74"  r="16" opacity=".95"/>
+            <circle cx="102" cy="86"  r="14" opacity=".8"/><circle cx="128" cy="110" r="15" opacity=".9"/>
+            <circle cx="74"  cy="108" r="13" opacity=".75"/><circle cx="100" cy="130" r="16" opacity=".95"/>
+            <circle cx="132" cy="152" r="13" opacity=".72"/><circle cx="70"  cy="146" r="15" opacity=".9"/>
+            <circle cx="98"  cy="172" r="14" opacity=".85"/><circle cx="128" cy="192" r="16" opacity=".95"/>
+            <circle cx="72"  cy="184" r="13" opacity=".75"/><circle cx="100" cy="214" r="15" opacity=".92"/>
+            <circle cx="132" cy="234" r="13" opacity=".7"/><circle cx="70"  cy="224" r="16" opacity=".95"/>
+            <circle cx="102" cy="254" r="14" opacity=".82"/><circle cx="130" cy="276" r="15" opacity=".9"/>
+            <circle cx="74"  cy="262" r="13" opacity=".76"/><circle cx="98"  cy="292" r="16" opacity=".95"/>
+          </g>
+          <rect x="46" y="18" width="108" height="284" rx="54" stroke="#D4AF37" stroke-opacity=".55"/>
+          <path d="M46 160h108" stroke="#D4AF37" stroke-opacity=".4"/>
+        </svg>
+      </div>
+    {% endif %}
+
+    <div class="price-line">
+      <span class="price"{% if product.is_placeholder %} data-tbd{% endif %}>{{ product.price_pence | money }}</span>
+      <span class="price-meta">incl. VAT{% if product.price_pence < freeShippingOver %} · free UK delivery over {{ freeShippingOver | money }}{% else %} · free UK delivery{% endif %}</span>
+    </div>
+
+    <div class="btn-row">
+      {% include "partials/add-to-basket.njk" %}
+      <a class="btn btn-line" href="#buy">More detail</a>
+    </div>
+  </div>
+</section>
+
+{# ---------------------------------------------------------- STORY BLOCKS #}
+{% set blocks = product.story_blocks %}
+{% include "partials/blocks/_render.njk" %}
+
+{# -------------------------------------------------------------- BUY BAND #}
+<section class="band band-alt band-line centred" id="buy">
+  <div class="wrap">
+    {% if product.summary %}<p class="eyebrow">{{ product.summary }}</p>{% endif %}
+    <h2 class="display" style="margin-top:1rem">{{ product.name }}</h2>
+
+    {% if product.is_placeholder %}
+      {% include "partials/placeholder-notice.njk" %}
+    {% endif %}
+
+    <div class="price-line">
+      <span class="price"{% if product.is_placeholder %} data-tbd{% endif %}>{{ product.price_pence | money }}</span>
+      <span class="price-meta">incl. VAT</span>
+    </div>
+
+    <div class="btn-row">
+      {% include "partials/add-to-basket.njk" %}
+      <a class="btn btn-line" href="/shop">Browse everything</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/seedfield.js" defer></script>
+{% endblock %}

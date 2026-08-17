@@ -1,13 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { setupDb, truncateAll, closeDb } from './helpers/db.js';
+import { setupDb, truncateAll } from './helpers/db.js';
 
 const { default: products } = await import('../models/products.js').catch(() => ({ default: null }));
 const { default: categories } = await import('../models/categories.js').catch(() => ({ default: null }));
 
 test('product model', async (t) => {
   await setupDb();
-  t.after(closeDb);
   t.beforeEach(truncateAll);
 
   await t.test('create returns the row it inserted', async () => {
@@ -113,7 +112,6 @@ test('product model', async (t) => {
 
 test('category model', async (t) => {
   await setupDb();
-  t.after(closeDb);
   t.beforeEach(truncateAll);
 
   await t.test('list returns categories in sort order', async () => {

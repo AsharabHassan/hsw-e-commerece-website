@@ -1,0 +1,16 @@
+{# A placeholder product gets a disabled control rather than a hidden one, so
+   the page still reads as a product page while being impossible to buy. #}
+{% if product.is_placeholder %}
+  <span class="btn btn-gold is-disabled" aria-disabled="true">Not available</span>
+{% else %}
+  <form method="post" action="/cart/add" class="add-form">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <input type="hidden" name="redirect_to" value="/shop/{{ product.slug }}">
+    <label class="qty-field">
+      <span class="visually-hidden">Quantity</span>
+      <input type="number" name="qty" value="1" min="1" max="99" inputmode="numeric">
+    </label>
+    <button class="btn btn-gold" type="submit">Add to Basket</button>
+  </form>
+{% endif %}

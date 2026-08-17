@@ -1,0 +1,46 @@
+{# Shared by the customer confirmation, account history and admin views. #}
+<div class="order-detail">
+  <dl class="order-meta">
+    <div><dt>Order reference</dt><dd class="mono">{{ order.public_token | orderRef }}</dd></div>
+    <div><dt>Placed</dt><dd>{{ order.created_at | date({withTime: true}) }}</dd></div>
+    <div><dt>Status</dt><dd><span class="status status-{{ order.status }}">{{ order.status }}</span></dd></div>
+    {% if order.paid_at %}<div><dt>Paid</dt><dd>{{ order.paid_at | date({withTime: true}) }}</dd></div>{% endif %}
+  </dl>
+
+  <table class="cart-table">
+    <caption class="visually-hidden">Items in this order</caption>
+    <thead><tr><th scope="col">Item</th><th scope="col">Qty</th><th scope="col">Unit</th><th scope="col">Total</th></tr></thead>
+    <tbody>
+      {% for item in order.items %}
+        <tr>
+          <th scope="row">
+            {% if item.slug_snapshot %}<a href="/shop/{{ item.slug_snapshot }}">{{ item.name_snapshot }}</a>
+            {% else %}{{ item.name_snapshot }}{% endif %}
+          </th>
+          <td>{{ item.qty }}</td>
+          <td>{{ item.unit_price_pence | money }}</td>
+          <td>{{ (item.unit_price_pence * item.qty) | money }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="cart-summary">
+    <p><span>Subtotal</span><span>{{ order.subtotal_pence | money }}</span></p>
+    <p><span>Delivery</span><span>{% if order.shipping_pence %}{{ order.shipping_pence | money }}{% else %}Free{% endif %}</span></p>
+    <p class="cart-total"><span>Total</span><span>{{ order.total_pence | money }}</span></p>
+  </div>
+
+  <div class="address-block">
+    <h3>Delivery address</h3>
+    <address>
+      {{ order.ship_name }}<br>
+      {{ order.ship_line1 }}<br>
+      {% if order.ship_line2 %}{{ order.ship_line2 }}<br>{% endif %}
+      {{ order.ship_city }}<br>
+      {{ order.ship_postcode }}<br>
+      {{ order.ship_country }}
+    </address>
+    <p class="mono">{{ order.email }}</p>
+  </div>
+</div>

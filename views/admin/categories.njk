@@ -1,0 +1,80 @@
+{% extends "admin/layout.njk" %}
+{% block title %}Categories | Admin{% endblock %}
+
+{% block admin %}
+<div class="head">
+  <p class="eyebrow">Admin</p>
+  <h1 class="display">Categories</h1>
+</div>
+
+{% if categories.length %}
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Slug</th>
+        <th scope="col">Published products</th>
+        <th scope="col">Sort</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cat in categories %}
+        <tr>
+          <th scope="row">{{ cat.name }}</th>
+          <td class="mono">{{ cat.slug }}</td>
+          <td>{{ cat.product_count }}</td>
+          <td>{{ cat.sort }}</td>
+          <td>
+            <form method="post" action="/admin/categories/{{ cat.id }}/delete">
+              <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+              <button class="btn-inline btn-remove" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p class="footnote">
+    <span>Note</span>
+    Deleting a category does not delete its products &mdash; they simply become
+    uncategorised.
+  </p>
+{% else %}
+  <p>No categories yet.</p>
+{% endif %}
+
+<h2 class="display" style="margin-top:3rem">Add a Category</h2>
+
+<form method="post" action="/admin/categories" class="admin-form" novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+  <div class="field-row">
+    <div class="field{% if errors.name %} has-error{% endif %}">
+      <label for="name">Name</label>
+      <input id="name" name="name" required value="{{ values.name }}">
+      {% if errors.name %}<p class="field-error">{{ errors.name }}</p>{% endif %}
+    </div>
+
+    <div class="field{% if errors.slug %} has-error{% endif %}">
+      <label for="slug">Slug</label>
+      <input id="slug" name="slug" required value="{{ values.slug }}">
+      {% if errors.slug %}<p class="field-error">{{ errors.slug }}</p>{% endif %}
+    </div>
+
+    <div class="field">
+      <label for="sort">Sort</label>
+      <input id="sort" name="sort" type="number" min="0" max="999" value="{{ values.sort or 0 }}">
+      <small>Lower numbers come first.</small>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="blurb">Blurb</label>
+    <input id="blurb" name="blurb" value="{{ values.blurb }}">
+    <small>One line, shown on the category tile on the home page.</small>
+  </div>
+
+  <button class="btn btn-gold" type="submit">Add Category</button>
+</form>
+{% endblock %}

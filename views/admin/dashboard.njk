@@ -1,0 +1,65 @@
+{% extends "admin/layout.njk" %}
+{% block title %}Admin | {{ storeName }}{% endblock %}
+
+{% block admin %}
+<div class="head">
+  <p class="eyebrow">Admin</p>
+  <h1 class="display">Dashboard</h1>
+</div>
+
+{% if not stripeConfigured %}
+  <p class="flash flash-error">
+    <strong>Payments are not configured.</strong>
+    Customers can browse and build a basket, but checkout will refuse. Set
+    <code>STRIPE_SECRET_KEY</code> and <code>STRIPE_WEBHOOK_SECRET</code> in
+    <code>.env</code> and restart.
+  </p>
+{% endif %}
+
+{% if placeholderCount %}
+  <p class="flash flash-error">
+    <strong>{{ placeholderCount }} product{{ 's are' if placeholderCount != 1 else ' is' }} still marked as a placeholder</strong>
+    and cannot be bought. Edit each one, replace the seeded copy and price, then
+    untick &ldquo;Placeholder&rdquo;.
+  </p>
+{% endif %}
+
+<div class="stat-row">
+  <div class="stat"><dt>{{ stats.pending }}</dt><dd>Awaiting payment</dd></div>
+  <div class="stat"><dt>{{ stats.paid }}</dt><dd>Paid, to ship</dd></div>
+  <div class="stat"><dt>{{ stats.shipped }}</dt><dd>Shipped</dd></div>
+  <div class="stat"><dt>{{ stats.revenue_pence | money }}</dt><dd>Revenue</dd></div>
+  <div class="stat"><dt>{{ publishedCount }}/{{ productCount }}</dt><dd>Published products</dd></div>
+  <div class="stat"><dt>{{ userCount }}</dt><dd>Accounts</dd></div>
+</div>
+
+<h2 class="display" style="margin-top:3rem">Recent Orders</h2>
+{% if recentOrders.length %}
+  <table class="admin-table">
+    <thead><tr><th scope="col">Reference</th><th scope="col">Placed</th><th scope="col">Customer</th><th scope="col">Total</th><th scope="col">Status</th></tr></thead>
+    <tbody>
+      {% for order in recentOrders %}
+        <tr>
+          <th scope="row"><a class="mono" href="/admin/orders/{{ order.id }}">{{ order.public_token | orderRef }}</a></th>
+          <td>{{ order.created_at | date({withTime: true}) }}</td>
+          <td>{{ order.email }}</td>
+          <td>{{ order.total_pence | money }}</td>
+          <td><span class="status status-{{ order.status }}">{{ order.status }}</span></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No orders yet.</p>
+{% endif %}
+
+<p class="footnote" style="margin-top:3rem">
+  <span>Environment</span>
+  Database driver: <code>{{ dbDriver }}</code>.
+  {% if dbDriver == 'pglite' %}
+    PGlite is the development database and is stored in <code>.data/</code>.
+    In production, set <code>DATABASE_URL</code> so the shop runs on a real
+    Postgres server.
+  {% endif %}
+</p>
+{% endblock %}
