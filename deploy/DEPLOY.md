@@ -167,7 +167,7 @@ npm run migrate
 ADMIN_EMAIL=you@yourdomain.co.uk ADMIN_PASSWORD='a long password' npm run seed
 ```
 
-The seed creates ten example products, **all flagged as placeholders**. They
+The seed creates eleven example products, **all flagged as placeholders**. They
 are visible in the shop but cannot be added to a basket, and each shows a gold
 "not for sale" notice. Replace them through the admin panel and untick
 "Placeholder" once the real copy, price and compliance checks are done.
@@ -193,7 +193,7 @@ sudo npm install -g pm2
 sudo mkdir -p /var/log/hsw
 sudo chown hsw:hsw /var/log/hsw
 
-pm2 start deploy/ecosystem.config.js
+pm2 start deploy/ecosystem.config.cjs
 pm2 save
 pm2 startup systemd      # then run the command it prints, with sudo
 ```

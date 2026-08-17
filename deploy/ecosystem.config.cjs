@@ -1,11 +1,12 @@
 // PM2 process definition.
 //
-//   pm2 start deploy/ecosystem.config.js
+//   pm2 start deploy/ecosystem.config.cjs
 //   pm2 save
 //   pm2 startup systemd     # then run the command it prints
 //
-// PM2 reads this file as CommonJS regardless of the package's "type": "module",
-// because the .cjs semantics are applied to ecosystem files specifically.
+// This file MUST keep the .cjs extension. package.json sets "type": "module",
+// so a .js file here would be loaded as an ES module and `module.exports`
+// would be undefined. PM2 requires the config as CommonJS.
 
 module.exports = {
   apps: [
