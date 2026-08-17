@@ -113,7 +113,7 @@ Three blockers, none of them engineering work:
 Two safeguards are built into the code so none of this can go live by
 accident:
 
-- **Every seeded product is flagged `is_placeholder`**, which renders a visible
+- **All eleven seeded products are flagged `is_placeholder`**, which renders a visible
   gold "not for sale" notice, blocks add-to-basket, omits the product from
   `sitemap.xml`, and publishes no `offers` in its structured data. Clear the
   flag per product in the admin panel once the real details are in.
