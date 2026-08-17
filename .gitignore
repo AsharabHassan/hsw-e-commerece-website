@@ -22,3 +22,10 @@ desktop.ini
 # Working files
 *.log
 *.tmp
+
+# Local database (PGlite, development only)
+.data/
+
+# Uploaded product images — these live on the droplet, not in git
+public/uploads/*
+!public/uploads/.gitkeep
