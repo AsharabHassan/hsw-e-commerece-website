@@ -53,13 +53,11 @@
   <div class="wrap">
     <a class="wordmark" href="/">HSW</a>
 
+    {# One range, one link. Categories are deliberately not surfaced: the shop
+       sells supplements only, and a nav that splits two products across
+       categories is navigation for its own sake. #}
     <nav class="mainnav" aria-label="Primary">
-      {# currentPath can be absent if a request failed before the locals
-         middleware ran; the chrome must still render. #}
       <a href="/shop"{% if "/shop" in (currentPath or "") %} aria-current="page"{% endif %}>Shop</a>
-      {% for cat in navCategories %}
-        <a href="/shop?category={{ cat.slug }}">{{ cat.name }}</a>
-      {% endfor %}
       <a href="/shipping-returns">Delivery</a>
     </nav>
 
@@ -97,19 +95,19 @@
       <div>
         <h4>Shop</h4>
         <ul>
-          <li><a href="/shop">All products</a></li>
-          {% for cat in navCategories %}
-            <li><a href="/shop?category={{ cat.slug }}">{{ cat.name }}</a></li>
+          {% for item in footerProducts %}
+            <li><a href="/shop/{{ item.slug }}">{{ item.name }}</a></li>
           {% endfor %}
+          <li><a href="/shop">All products</a></li>
         </ul>
       </div>
       <div>
         <h4>Clinic</h4>
         <ul>
-          <li><a href="https://harleystreetmedicalwellness.co.uk/">IV therapy</a></li>
-          <li><a href="https://harleystreetmedicalwellness.co.uk/">EBOO</a></li>
-          <li><a href="https://harleystreetmedicalwellness.co.uk/">Metabolic health</a></li>
-          <li><a href="https://harleystreetmedicalwellness.co.uk/">Membership</a></li>
+          {# The shop sells supplements. It does not sell, and must not appear
+             to offer, the clinic's treatments or diagnostics. #}
+          <li><a href="https://harleystreetmedicalwellness.co.uk/">The clinic</a></li>
+          <li><a href="https://harleystreetmedicalwellness.co.uk/">Book a consultation</a></li>
         </ul>
       </div>
       <div>

@@ -4,7 +4,6 @@ import express from 'express';
 
 import config from '../config.js';
 import products from '../models/products.js';
-import categories from '../models/categories.js';
 
 const router = express.Router();
 
@@ -13,9 +12,7 @@ router.get('/', async (req, res, next) => {
     const all = await products.listPublished();
 
     res.render('shop/home.njk', {
-      featured: all.filter((p) => !p.is_placeholder).slice(0, 3),
-      products: all.slice(0, 6),
-      categories: await categories.listWithPublishedCounts(),
+      products: all,
       hasRealProducts: all.some((p) => !p.is_placeholder),
     });
   } catch (err) {
@@ -25,23 +22,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/shop', async (req, res, next) => {
   try {
-    const categorySlug = typeof req.query.category === 'string' ? req.query.category : null;
-    const category = categorySlug ? await categories.getBySlug(categorySlug) : null;
-
-    if (categorySlug && !category) {
-      return res.status(404).render('error.njk', {
-        status: 404,
-        title: 'Category not found',
-        heading: 'No such category',
-        message: 'That category does not exist. Browse everything instead.',
-      });
-    }
-
-    res.render('shop/index.njk', {
-      products: await products.listPublished({ categorySlug }),
-      categories: await categories.listWithPublishedCounts(),
-      category,
-    });
+    res.render('shop/index.njk', { products: await products.listPublished() });
   } catch (err) {
     next(err);
   }

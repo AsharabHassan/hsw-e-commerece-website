@@ -10,7 +10,6 @@
   </a>
 
   <div class="product-card-body">
-    {% if card.category_name %}<p class="eyebrow">{{ card.category_name }}</p>{% endif %}
     <h3 class="display"><a href="/shop/{{ card.slug }}">{{ card.name }}</a></h3>
     {% if card.subtitle %}<p class="product-card-sub">{{ card.subtitle }}</p>{% endif %}
     <p class="product-card-price"{% if card.is_placeholder %} data-tbd{% endif %}>{{ card.price_pence | money }}</p>

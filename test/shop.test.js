@@ -81,18 +81,50 @@ test('storefront', async (t) => {
     assert.equal(data.offers.priceCurrency, 'GBP');
   });
 
-  await t.test('the catalogue filters by category', async () => {
+  await t.test('the storefront exposes no category navigation', async () => {
     const cat = await categories.create({ slug: 'supplements', name: 'Supplements' });
     await publish({ slug: 'in-cat', name: 'In Category', price_pence: 100, category_id: cat.id });
-    await publish({ slug: 'out-cat', name: 'Out Of Category', price_pence: 100 });
 
-    const res = await request(app).get('/shop?category=supplements');
-    assert.match(res.text, /In Category/);
-    assert.doesNotMatch(res.text, /Out Of Category/);
+    // Categories still exist in the data model — products carry one, and the
+    // admin can use it — but the shop deliberately does not navigate by them.
+    // One small range does not need to be split up.
+    for (const path of ['/', '/shop']) {
+      const res = await request(app).get(path);
+      assert.equal(res.status, 200);
+      assert.doesNotMatch(res.text, /\?category=/, `${path} still links to a category filter`);
+      assert.doesNotMatch(res.text, /filter-chip/, `${path} still renders category filter chips`);
+    }
   });
 
-  await t.test('an unknown category 404s', async () => {
-    assert.equal((await request(app).get('/shop?category=nope')).status, 404);
+  await t.test('/shop lists everything, with no filtering', async () => {
+    await publish({ slug: 'one', name: 'Product One', price_pence: 100 });
+    await publish({ slug: 'two', name: 'Product Two', price_pence: 200 });
+
+    const res = await request(app).get('/shop');
+    assert.match(res.text, /Product One/);
+    assert.match(res.text, /Product Two/);
+  });
+
+  await t.test('a stray ?category= query is ignored rather than 404ing', async () => {
+    await publish({ slug: 'still-here', name: 'Still Here', price_pence: 100 });
+
+    // Old links and bookmarks must not break just because the filter went away.
+    const res = await request(app).get('/shop?category=whatever');
+    assert.equal(res.status, 200);
+    assert.match(res.text, /Still Here/);
+  });
+
+  await t.test('the footer links to products, not categories', async () => {
+    await publish({ slug: 'footer-item', name: 'Footer Item', price_pence: 100 });
+    const res = await request(app).get('/');
+    assert.match(res.text, /href="\/shop\/footer-item"/);
+  });
+
+  await t.test('the shop does not advertise clinic treatments or diagnostics', async () => {
+    const res = await request(app).get('/');
+    for (const term of ['IV therapy', 'EBOO', 'Metabolic health', 'blood panel', 'Blood Panel']) {
+      assert.doesNotMatch(res.text, new RegExp(term), `the footer still mentions "${term}"`);
+    }
   });
 
   await t.test('the sitemap lists real products but not placeholders', async () => {

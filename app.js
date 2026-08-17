@@ -18,7 +18,7 @@ import { csrf } from './lib/csrf.js';
 import { formatPence, penceToInput } from './lib/money.js';
 import cart from './lib/cart.js';
 
-import categories from './models/categories.js';
+import products from './models/products.js';
 import users from './models/users.js';
 
 import shopRoutes from './routes/shop.js';
@@ -162,7 +162,13 @@ export async function createApp({ runMigrations = true } = {}) {
       res.locals.stripeConfigured = config.stripe.configured;
 
       res.locals.cartCount = cart.count(req.session);
-      res.locals.navCategories = await categories.list();
+
+      // The footer links to the products themselves. With a range this small,
+      // category navigation would be navigation for its own sake.
+      res.locals.footerProducts = (await products.listPublished()).map((p) => ({
+        slug: p.slug,
+        name: p.name,
+      }));
 
       res.locals.user = req.session?.userId ? await users.getById(req.session.userId) : null;
 

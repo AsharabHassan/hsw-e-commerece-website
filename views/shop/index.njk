@@ -1,27 +1,17 @@
 {% extends "layout.njk" %}
 
-{% block title %}{% if category %}{{ category.name }}{% else %}Shop{% endif %} | {{ storeName }}{% endblock %}
-{% block description %}{% if category and category.blurb %}{{ category.blurb }}{% else %}Supplements formulated at our Harley Street clinic.{% endif %}{% endblock %}
+{% block title %}Shop | {{ storeName }}{% endblock %}
+{% block description %}Supplements formulated at our Harley Street clinic, with every milligram published in full.{% endblock %}
 
 {% block content %}
 
 <section class="band band-line">
   <div class="wrap">
     <div class="head centred">
-      <p class="eyebrow">{{ 'Category' if category else 'The Range' }}</p>
-      <h2 class="display">{% if category %}{{ category.name }}{% else %}Everything We <span class="gold">Make</span>{% endif %}</h2>
-      {% if category and category.blurb %}<p class="sub">{{ category.blurb }}</p>{% endif %}
+      <p class="eyebrow">The Range</p>
+      <h2 class="display">Everything We <span class="gold">Make</span></h2>
     </div>
 
-    {% if categories.length %}
-      <nav class="filter-row" aria-label="Filter by category">
-        <a class="filter-chip{% if not category %} is-active{% endif %}" href="/shop">All</a>
-        {% for cat in categories %}
-          <a class="filter-chip{% if category and category.id == cat.id %} is-active{% endif %}"
-             href="/shop?category={{ cat.slug }}">{{ cat.name }}</a>
-        {% endfor %}
-      </nav>
-    {% endif %}
   </div>
 </section>
 

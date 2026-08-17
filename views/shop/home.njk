@@ -27,26 +27,6 @@
   </div>
 </section>
 
-{% if categories.length %}
-<section class="band">
-  <div class="wrap">
-    <div class="head centred">
-      <p class="eyebrow">The Range</p>
-      <h2 class="display">Where To <span class="gold">Start</span></h2>
-    </div>
-    <div class="category-row">
-      {% for cat in categories %}
-        <a class="category-tile" href="/shop?category={{ cat.slug }}">
-          <h3 class="display">{{ cat.name }}</h3>
-          {% if cat.blurb %}<p>{{ cat.blurb }}</p>{% endif %}
-          <span class="category-count">{{ cat.product_count }} product{{ 's' if cat.product_count != 1 }}</span>
-        </a>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
-
 <section class="band band-alt">
   <div class="wrap">
     <div class="head centred">
