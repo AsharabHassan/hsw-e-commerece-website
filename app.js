@@ -4,6 +4,8 @@
 // through supertest without binding a port.
 
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 import express from 'express';
@@ -33,11 +35,34 @@ import sitemapRoutes from './routes/sitemap.js';
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 
 /**
+ * Content hash of the stylesheets, computed once at boot.
+ *
+ * nginx serves /css with a 30-day expiry, which is right for performance and
+ * wrong for shipping a fix: without this, a corrected stylesheet would not
+ * reach a returning visitor for a month. Appending the hash changes the URL
+ * whenever the bytes change, so caches update the moment we deploy and keep
+ * caching hard the rest of the time.
+ */
+function assetVersion() {
+  const hash = createHash('sha1');
+  for (const file of ['public/css/hsw.css', 'public/css/shop.css']) {
+    try {
+      hash.update(readFileSync(path.join(ROOT, file)));
+    } catch {
+      // A missing stylesheet is a bigger problem than a stale cache.
+    }
+  }
+  return hash.digest('hex').slice(0, 10);
+}
+
+/**
  * @param {{runMigrations?: boolean}} [options]
  * @returns {Promise<import('express').Express>}
  */
 export async function createApp({ runMigrations = true } = {}) {
   if (runMigrations) await migrate();
+
+  const ASSET_VERSION = assetVersion();
 
   const app = express();
 
@@ -152,6 +177,7 @@ export async function createApp({ runMigrations = true } = {}) {
   // -------------------------------------------------------------------------
   app.use(async (req, res, next) => {
     try {
+      res.locals.assetVersion = ASSET_VERSION;
       res.locals.currentPath = req.path;
       res.locals.baseUrl = config.baseUrl;
       res.locals.storeName = config.storeName;

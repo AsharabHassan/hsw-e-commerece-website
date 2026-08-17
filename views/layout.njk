@@ -25,8 +25,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/css/hsw.css">
-<link rel="stylesheet" href="/css/shop.css">
+<link rel="stylesheet" href="/css/hsw.css?v={{ assetVersion }}">
+<link rel="stylesheet" href="/css/shop.css?v={{ assetVersion }}">
 
 <script>
 /* Runs before first paint: without it the page flashes light before the
@@ -136,7 +136,7 @@
   </div>
 </footer>
 
-<script src="/js/theme.js" defer></script>
+<script src="/js/theme.js?v={{ assetVersion }}" defer></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

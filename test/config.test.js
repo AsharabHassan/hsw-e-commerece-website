@@ -131,3 +131,21 @@ test('brand assets survived the extraction from index.html', async (t) => {
     assert.match(layout, /hsw-theme/, 'the pre-paint theme script must be inline, not deferred');
   });
 });
+
+test('static assets are cache-busted', async (t) => {
+  const { getApp, request } = await import('./helpers/app.js');
+  const app = await getApp();
+
+  await t.test('stylesheets carry a version query', async () => {
+    const res = await request(app).get('/');
+    assert.match(res.text, /\/css\/hsw\.css\?v=[a-f0-9]{10}/);
+    assert.match(res.text, /\/css\/shop\.css\?v=[a-f0-9]{10}/);
+    assert.match(res.text, /\/js\/theme\.js\?v=[a-f0-9]{10}/);
+  });
+
+  await t.test('the version is a content hash, so it only moves when the CSS does', async () => {
+    const a = (await request(app).get('/')).text.match(/shop\.css\?v=([a-f0-9]+)/)[1];
+    const b = (await request(app).get('/shop')).text.match(/shop\.css\?v=([a-f0-9]+)/)[1];
+    assert.equal(a, b, 'the same build serves the same version');
+  });
+});
