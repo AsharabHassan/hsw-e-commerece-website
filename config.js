@@ -47,7 +47,7 @@ const schema = z.object({
   FREE_SHIPPING_OVER_PENCE: z.coerce.number().int().min(0).default(7500),
 
   STORE_NAME: z.string().default('Harley Street Wellness'),
-  STORE_EMAIL: z.string().default('hello@harleystreetmedicalwellness.co.uk'),
+  STORE_EMAIL: z.string().default('hello@harleystreetwellness.co.uk'),
 });
 
 const parsed = schema.safeParse(process.env);
