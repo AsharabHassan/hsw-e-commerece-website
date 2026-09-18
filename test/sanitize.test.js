@@ -129,3 +129,25 @@ test('storyBlocks', async (t) => {
     assert.equal(block.slots[0].image, null, 'external image sources are not accepted');
   });
 });
+
+test('gallery image paths', async (t) => {
+  const image = (path) => storyBlocks([{ type: 'gallery', slots: [{ image: path }] }])[0].slots[0].image;
+
+  await t.test('accepts admin uploads and committed product photography', () => {
+    assert.equal(image('/uploads/1786964983829-8ff31e1e49d1e12d.png'), '/uploads/1786964983829-8ff31e1e49d1e12d.png');
+    assert.equal(image('/img/products/urolithin-a/01-front.jpg'), '/img/products/urolithin-a/01-front.jpg');
+  });
+
+  await t.test('rejects traversal, other directories and external URLs', () => {
+    for (const bad of [
+      '/uploads/../app.js',
+      '/img/products/../../config.js',
+      '/img/products/a/b/c.jpg',
+      '/css/hsw.css',
+      'https://evil.example/x.jpg',
+      '//evil.example/x.jpg',
+    ]) {
+      assert.equal(image(bad), null, bad);
+    }
+  });
+});

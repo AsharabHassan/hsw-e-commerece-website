@@ -7,10 +7,8 @@
 // visible "not for sale" notice and blocks add-to-basket. Nothing here is real
 // product data — the prices are round numbers chosen to look like prices, and
 // the copy is written to be replaced. The one exception is the Urolithin A
-// Complex page, whose copy is carried over verbatim from the original
-// single-page build, TBD markers and all. Those TBDs are deliberate: the mg
-// amounts, the NAD+ precursor identity and the capsule format are genuinely
-// unresolved, and inventing them would be worse than showing the gap.
+// Complex, whose copy and photography live in ./content/urolithin-a.js and
+// are transcribed from the finished bottle.
 
 import { migrate } from './migrate.js';
 import { query, close } from './index.js';
@@ -19,6 +17,7 @@ import products from '../models/products.js';
 import categories from '../models/categories.js';
 import users from '../models/users.js';
 import { storyBlocks } from '../lib/sanitize.js';
+import { UROLITHIN_FIELDS, UROLITHIN_IMAGES } from './content/urolithin-a.js';
 
 // ---------------------------------------------------------------------------
 // Categories
@@ -28,7 +27,7 @@ const CATEGORIES = [
   {
     slug: 'supplements',
     name: 'Supplements',
-    blurb: 'Clinic-formulated capsules with the per-compound split published in full.',
+    blurb: 'Clinic-formulated supplements, with the full label published.',
     sort: 1,
   },
   {
@@ -42,165 +41,6 @@ const CATEGORIES = [
     name: 'Testing',
     blurb: 'Blood panels and diagnostics, reviewed by a clinician.',
     sort: 3,
-  },
-];
-
-// ---------------------------------------------------------------------------
-// The Urolithin A Complex page, expressed as story blocks
-// ---------------------------------------------------------------------------
-
-const UROLITHIN_BLOCKS = [
-  {
-    type: 'split',
-    anchor: 'paradox',
-    eyebrow: '01 — The Problem',
-    heading: 'You Can\'t Just <span class="gold">Eat Pomegranates</span>',
-    media: 'seedfield',
-    mediaLabel:
-      'Thirty seed shapes, ten of them filled, showing that roughly one in three people can convert pomegranate compounds into Urolithin A',
-    mediaCaption:
-      '<strong>Around 1 in 3 people</strong> carry the gut bacteria needed — the rest convert little or none',
-    paragraphs: [
-      'Pomegranates, walnuts and berries contain ellagitannins. They are not Urolithin A. Your gut bacteria have to convert them — and research published in <em>Nature Metabolism</em> found that only a minority of people host the microbial species that can do it.',
-      "Everyone else eats the fruit and produces very little of the molecule. This formula skips the conversion step and delivers Urolithin A directly, so the result doesn't depend on which bacteria you happen to carry.",
-    ],
-  },
-
-  {
-    type: 'steps',
-    anchor: 'sequence',
-    alt: true,
-    eyebrow: '02 — The Sequence',
-    heading: 'Clear Out. <span class="gold">Rebuild. Run.</span>',
-    intro:
-      'Mitochondria have a lifecycle. Most formulas act on one point in it. These five compounds are grouped by where they act.',
-    items: [
-      {
-        n: '01',
-        title: 'Clear',
-        sub: 'Urolithin A',
-        body: 'Studied for its role in mitophagy — the process by which cells identify worn-out mitochondria and break them down for recycling. It is the most clinically investigated compound in this category.',
-      },
-      {
-        n: '02',
-        title: 'Rebuild',
-        sub: 'PQQ',
-        body: 'A redox cofactor studied in connection with mitochondrial biogenesis — the formation of new mitochondria. Where Urolithin A is researched for clearance, PQQ is researched for what replaces it.',
-      },
-      {
-        n: '03',
-        title: 'Run',
-        sub: 'NAD+ Precursor · CoQ10',
-        body: 'CoQ10 is a component of the electron transport chain. NAD+ is the coenzyme that chain depends on, and cellular levels are known to decline with age. Both are involved in normal energy-yielding metabolism.',
-      },
-      {
-        n: '04',
-        title: 'Signal',
-        sub: 'Trans-Resveratrol',
-        body: 'A polyphenol studied for its interaction with the sirtuin family of proteins — which require NAD+ to function. Included here in the trans- isomer, the form used in published research.',
-      },
-    ],
-  },
-
-  {
-    type: 'facts',
-    anchor: 'facts',
-    eyebrow: '03 — Full Disclosure',
-    heading: 'Every Milligram, <span class="gold">Printed</span>',
-    paragraphs: [
-      "Plenty of formulas print one large number on the front and a proprietary blend on the back. You get the total, not the split, so you can't tell whether the headline ingredient is 500mg or 50mg.",
-      '<strong>1000mg is the weight of the whole complex.</strong> Here is how that 1000mg divides across the five compounds — the same panel that&#39;s printed on the bottle.',
-    ],
-    footnoteLabel: 'Worth comparing against',
-    footnote:
-      'Published human trials on Urolithin A have used 250–1000mg of that compound on its own. Whichever brand you buy, check the per-compound figure rather than the front-of-pack total.',
-    panelTitle: 'Supplement Facts',
-    serving: '2 capsules',
-    servingsPerContainer: '60',
-    totalRow: { name: 'Urolithin A Complex', amount: '1000 mg' },
-    rows: [
-      { name: 'Urolithin A', amount: 'TBD mg', tbd: true },
-      { name: 'NAD+ precursor — name it', amount: 'TBD mg', tbd: true, nameTbd: true },
-      { name: 'Trans-resveratrol', amount: 'TBD mg', tbd: true },
-      { name: 'Coenzyme Q10 (form?)', amount: 'TBD mg', tbd: true, nameTbd: true },
-      { name: 'PQQ (pyrroloquinoline quinone)', amount: 'TBD mg', tbd: true },
-    ],
-    footnotes: [
-      { label: 'Other ingredients', value: 'TBD', tbd: true },
-      { label: 'Capsule shell', value: 'TBD — confirm softgel vs vegetarian', tbd: true },
-      { label: 'Allergens', value: 'TBD', tbd: true },
-    ],
-  },
-
-  {
-    type: 'gallery',
-    alt: true,
-    eyebrow: '04 — Getting It Right',
-    heading: 'Take It <span class="gold">With Fat</span>',
-    paragraphs: [
-      "Two of the five compounds in this formula — CoQ10 and trans-resveratrol — are fat-soluble. Taken with water on an empty stomach, a meaningful share of what you've paid for passes through unabsorbed.",
-      "Take two capsules with a meal that contains fat. Eggs, avocado, olive oil, oily fish, full-fat yoghurt or nuts are all sufficient. It doesn't need to be a large meal — it needs to contain fat.",
-    ],
-    callout: {
-      title: 'Simplest routine',
-      body: "Two capsules with breakfast, if breakfast contains fat. If it doesn't, take them with your main meal instead. Consistency matters more than the time of day.",
-    },
-    slots: [
-      { label: 'Slot 01', caption: 'Bottle · front' },
-      { label: 'Slot 02', caption: 'Label · rear' },
-      { label: 'Slot 03', caption: 'Capsules in hand' },
-      { label: 'Slot 04', caption: 'Clinic lifestyle' },
-    ],
-  },
-
-  {
-    type: 'faq',
-    anchor: 'questions',
-    eyebrow: '05 — Questions',
-    heading: 'Before <span class="gold">You Buy</span>',
-    items: [
-      {
-        q: 'Is the 1000mg all Urolithin A?',
-        a: [
-          'No — and any brand that lets you assume so is being slippery. 1000mg is the combined weight of all five compounds. The exact split is printed in the Supplement Facts panel above and on the bottle itself.',
-          "Published human trials on Urolithin A have used doses in the 250–1000mg range for that compound alone. Compare the per-compound figure, not the front-of-pack number, whenever you're assessing any product in this category.",
-        ],
-      },
-      {
-        q: 'Why five compounds instead of one?',
-        a: [
-          'Because they act at different points in the mitochondrial lifecycle: clearance, formation, and energy-yielding metabolism. Buying them separately means five bottles, five dosing schedules and five markups.',
-          "Worth being straight with you: the individual compounds each have their own research base, but large long-term human trials on this specific five-compound combination don't yet exist. Anyone claiming otherwise is overselling.",
-        ],
-      },
-      {
-        q: 'How long until I notice anything?',
-        a: [
-          'Trials on the individual compounds typically run over weeks to months rather than days. Treat this as something you take consistently over a period, not something you assess after a week.',
-          'The 120-capsule bottle is a 60-day supply at two capsules daily, which is a reasonable first period to judge it over.',
-        ],
-      },
-      {
-        q: 'Can I take this with my medication?',
-        a: [
-          'Ask your GP or pharmacist first, particularly if you take anticoagulants or statins, or if you are pregnant or breastfeeding. This applies to CoQ10 and resveratrol specifically, both of which have documented interactions worth checking.',
-          'If you are a patient at the clinic, raise it at your next consultation and we will review it against your current treatment plan.',
-        ],
-      },
-      {
-        q: 'Is it third-party tested?',
-        a: [
-          'TBD — add the testing laboratory, what is tested for (identity, potency, heavy metals, microbial), and a link to the current batch certificate of analysis.',
-          'If you have batch COAs, publish them. In this category it is the single most persuasive thing you can show a sceptical buyer.',
-        ],
-      },
-      {
-        q: "What's your returns policy?",
-        a: [
-          'TBD — state the returns window and whether opened bottles are covered. Under UK consumer law you must give a 14-day cancellation period for online orders; many supplement brands offer longer.',
-        ],
-      },
-    ],
   },
 ];
 
@@ -420,16 +260,10 @@ function genericBlocks({ what, who, how }) {
 
 const PRODUCTS = [
   {
-    slug: 'urolithin-a-complex',
-    name: 'Urolithin A Complex',
-    subtitle:
-      "Your gut probably can't make Urolithin A from food. This is the molecule itself — with the four compounds that work alongside it, at doses we publish in full.",
-    summary: '120 Capsules · 60-Day Supply',
+    ...UROLITHIN_FIELDS,
     category: 'supplements',
     price_pence: 5400,
-    meta_description:
-      'A 1000mg five-compound mitochondrial complex — Urolithin A, NAD+ precursor, trans-resveratrol, CoQ10 and PQQ. Full dose disclosure. From the Harley Street Wellness clinic.',
-    story_blocks: UROLITHIN_BLOCKS,
+    images: UROLITHIN_IMAGES,
   },
 
   {
@@ -634,7 +468,10 @@ export async function seed({ adminEmail, adminPassword, quiet = false } = {}) {
         skipped += 1;
       }
     } else {
-      await products.create(fields);
+      const product = await products.create(fields);
+      for (const [sort, image] of (spec.images ?? []).entries()) {
+        await products.addImage(product.id, { ...image, sort });
+      }
       created += 1;
     }
   }
